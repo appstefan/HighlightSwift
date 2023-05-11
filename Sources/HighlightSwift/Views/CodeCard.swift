@@ -7,7 +7,7 @@ public struct CodeCard: View {
     var colorScheme
     
     @State
-    var style: HighlightStyle
+    var styleName: HighlightStyle.Name
     
     @State
     var textStyle: Font.TextStyle
@@ -19,16 +19,16 @@ public struct CodeCard: View {
     var highlightResult: HighlightResult?
     
     let text: String
-    let initialStyle: HighlightStyle
     let initialTextStyle: Font.TextStyle
+    let initialStyleName: HighlightStyle.Name
 
     public init(_ text: String,
-                style: HighlightStyle = .stackoverflow,
-                textStyle: Font.TextStyle = .caption2) {
+                textStyle: Font.TextStyle = .caption2,
+                style: HighlightStyle.Name = .stackoverflow) {
         self.text = text
-        self.initialStyle = style
+        self.initialStyleName = style
         self.initialTextStyle = textStyle
-        self._style = State(initialValue: style)
+        self._styleName = State(initialValue: style)
         self._textStyle = State(initialValue: textStyle)
     }
     
@@ -39,7 +39,7 @@ public struct CodeCard: View {
                 .onTapGesture(count: 2, perform: resetStyle)
                 .onTapGesture(perform: toggleShowButtons)
             HStack {
-                CodeText(text, style: style) { highlightResult in
+                CodeText(text, style: styleName) { highlightResult in
                     self.highlightResult = highlightResult
                 }
                 .font(.system(textStyle))
@@ -63,11 +63,11 @@ public struct CodeCard: View {
         .background {
             ZStack {
                 if let highlightResult {
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .fill(highlightResult.backgroundColor)
                 }
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .stroke(.thinMaterial, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(.thinMaterial)
             }
         }
         .onChange(of: colorScheme) { newValue in
@@ -79,9 +79,9 @@ public struct CodeCard: View {
     
     func resetStyle() {
         withAnimation {
-            style = initialStyle
-            textStyle = initialTextStyle
             showStyleControls = false
+            textStyle = initialTextStyle
+            styleName = initialStyleName
         }
     }
     
@@ -118,10 +118,10 @@ public struct CodeCard: View {
                 systemImageText("textformat.size")
             }
             Menu {
-                Picker("Style", selection: $style) {
-                    ForEach(HighlightStyle.allCases) { style in
-                        Text(style.displayName)
-                            .tag(style)
+                Picker("Style", selection: $styleName) {
+                    ForEach(HighlightStyle.Name.allCases) { styleName in
+                        Text(styleName.rawValue)
+                            .tag(styleName)
                     }
                 }
             } label: {
@@ -173,7 +173,7 @@ struct CodeCard_Previews: PreviewProvider {
     
     static var previews: some View {
         ScrollView {
-            CodeCard(python, style: .atomOne, textStyle: .body)
+            CodeCard(python, textStyle: .body, style: .atomOne)
                 .padding()
         }
     }

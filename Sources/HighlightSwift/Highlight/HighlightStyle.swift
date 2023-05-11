@@ -1,55 +1,57 @@
 import SwiftUI
 
-public enum HighlightStyle: String, CaseIterable, Identifiable, Equatable {
-    case a11y
-    case atomOne = "atom-one"
-    case classic
-    case edge
-    case github
-    case google
-    case gradient
-    case grayscale
-    case harmonic16
-    case heetch
-    case horizon
-    case humanoid
-    case ia
-    case isblEditor = "isbl-editor"
-    case kimbie
-    case nnfx
-    case pandaSyntax = "panda-syntax"
-    case papercolor
-    case paraiso
-    case qtcreator
-    case silk
-    case solarFlare = "solar-flare"
-    case solarized
-    case stackoverflow
-    case standard
-    case summerfruit
-    case synthMidnightTerminal = "synth-midnight-terminal"
-    case tokyoNight = "tokyo-night"
-    case unikitty
-    case xcode
+public struct HighlightStyle {
+    let selectorsText: String
+    let backgroundHex: String
     
-    public var id: String {
-        rawValue
-    }
-    
-    var displayName: String {
-        rawValue
-            .replacingOccurrences(of: "-", with: " ")
-            .capitalized
-    }
-    
-    func name(_ colorScheme: ColorScheme) -> String {
+    public init(_ name: Name, colorScheme: ColorScheme = .light) {
         switch colorScheme {
-        case .dark:
-            return rawValue + "-dark"
         case .light:
-            return rawValue + "-light"
+            self.selectorsText = String(describing: HighlightStyleSelectors.light(name))
+            self.backgroundHex = String(describing: HighlightStyleBackground.light(name))
+        case .dark:
+            self.selectorsText = String(describing: HighlightStyleSelectors.dark(name))
+            self.backgroundHex = String(describing: HighlightStyleBackground.dark(name))
         @unknown default:
-            return rawValue + "-light"
+            self.selectorsText = ""
+            self.backgroundHex = ""
         }
+    }
+    
+    public enum Name: String, CaseIterable, Identifiable, Equatable {
+        public var id: String {
+            rawValue
+        }
+        
+        case a11y = "a11y"
+        case atomOne = "Atom One"
+        case classic = "Classic"
+        case edge = "Edge"
+        case github = "GitHub"
+        case google = "Google"
+        case gradient = "Gradient"
+        case grayscale = "Grayscale"
+        case harmonic16 = "Harmonic16"
+        case heetch = "Heetch"
+        case horizon = "Horizon"
+        case humanoid = "Humanoid"
+        case ia = "iA"
+        case isblEditor = "ISBL Editor"
+        case kimbie = "Kimbie"
+        case nnfx = "NNFX"
+        case pandaSyntax = "Panda Syntax"
+        case papercolor = "Papercolor"
+        case paraiso = "Paraiso"
+        case qtcreator = "QT Creator"
+        case silk = "Silk"
+        case solarFlare = "Solar Flare"
+        case solarized = "Solarized"
+        case stackoverflow = "StackOverflow"
+        case standard = "Standard"
+        case summerfruit = "Summerfruit"
+        case synthMidnightTerminal = "Synth Midnight Terminal"
+        case tokyoNight = "Tokyo Night"
+        case unikitty = "Unikitty"
+        case xcode = "Xcode"
     }
 }

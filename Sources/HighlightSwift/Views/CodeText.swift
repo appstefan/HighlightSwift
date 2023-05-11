@@ -16,17 +16,17 @@ public struct CodeText: View {
     
     let text: String
     let language: String?
-    let style: HighlightStyle
+    let styleName: HighlightStyle.Name
     let showBackground: Bool
     let onHighlightResult: ((HighlightResult) -> Void)?
 
     public init(_ text: String,
-                style: HighlightStyle = .stackoverflow,
+                style: HighlightStyle.Name = .stackoverflow,
                 language: String? = nil,
                 showBackground: Bool = false,
                 onHighlightResult: ((HighlightResult) -> Void)? = nil) {
         self.text = text
-        self.style = style
+        self.styleName = style
         self.language = language
         self.showBackground = showBackground
         self.onHighlightResult = onHighlightResult
@@ -35,7 +35,7 @@ public struct CodeText: View {
     public var body: some View {
         ZStack {
             if let highlightResult {
-                Text(highlightResult.attributedText)
+                Text(highlightResult.text)
                     .padding(.bottom, -16)
             } else {
                 Text(text)
@@ -58,8 +58,8 @@ public struct CodeText: View {
                 await highlightText()
             }
         }
-        .onChange(of: style) { newStyle in
-            highlightText(newStyle: newStyle)
+        .onChange(of: styleName) { newStyleName in
+            highlightText(newStyleName: newStyleName)
         }
         .onChange(of: colorScheme) { newColorScheme in
             self.highlightResult = nil
@@ -67,31 +67,25 @@ public struct CodeText: View {
         }
     }
     
-    func highlightText(newStyle: HighlightStyle? = nil,
+    func highlightText(newStyleName: HighlightStyle.Name? = nil,
                        newColorScheme: ColorScheme? = nil) {
         highlightTask?.cancel()
-        let style = newStyle ?? style
+        let styleName = newStyleName ?? styleName
         let colorScheme = newColorScheme ?? colorScheme
-        let styleName = style.name(colorScheme)
+        let highlightStyle = HighlightStyle(styleName, colorScheme: colorScheme)
         self.highlightTask = Task {
-            await highlightText(styleName)
+            await highlightText(highlightStyle)
         }
     }
     
-    func highlightText(_ styleName: String? = nil) async {
-        do {
-            let result = try await Highlight.text(
-                text,
-                language: language,
-                styleName: styleName ?? style.name(colorScheme)
-            )
+    func highlightText(_ style: HighlightStyle? = nil) async {
+        let result = try? await Highlight.text(
+            text,
+            language: language,
+            style: style ?? HighlightStyle(styleName, colorScheme: colorScheme)
+        )
+        if let result {
             await didHighlightText(result)
-        } catch is CancellationError {
-            //
-        } catch is HighlightError {
-            self.errorText = "Highlight error"
-        } catch {
-            self.errorText = "Unknown error"
         }
     }
     
