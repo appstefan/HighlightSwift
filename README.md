@@ -2,49 +2,59 @@
 
 Code syntax highlighting for SwiftUI using Highlight.js
 
-## Features
+## Package Contents
+ 
+#### `Highlight`
+Converts a code `String` into a highlighted `AttributedString`
+- 🔍 Automatic language detection
+- 📚 Supports 36 common languages
+- 🎨 Includes 30 syntax color styles
+- 🧰 Based on highlight.js and `JavaScriptCore`
 
-🔍 Automatic language detection
-📚 Supports 36 common languages
-🎨 Includes 30 syntax color styles
-🔠 Works with SwiftUI font modifier
-🌗 Styles sync with system Dark Mode
-🧰 Based on highlight.js and `JavaScriptCore`
+#### `CodeText`
+Drop-in replacement for SwiftUI `Text` view
+- 🔠 Works with SwiftUI font modifier
+- 🌗 Automatically changes style with Dark Mode
 
-## Includes
-
-### ⚙️ `Highlight` core Swift class
-Converts any code `String` to a highlighted `AttributedString`
-
-### 📄 `CodeText` basic SwiftUI view
-Drop-in replacement for standard `Text` with sensible defaults for highlighting
-
-### 📺 `CodeCard` fancy SwiftUI view
-Showcase for `CodeText` on iOS with detected language and style controls
+#### `CodeCard`
+Showcase for `CodeText` with detected language display and style controls
 
 ## Usage
 
-### CodeCard
+#### `CodeCard`
 
-Create a card with some code text:
+Create with some code text:
 ```swift
-let text: String = "@State var isOn: Bool = true"
+let text: String = """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+"""
 
 var body: some View {
     CodeCard(text)
 }
 ```
 
-Optionally provide the inital style state properties:
+Optionally, provide the inital style state properties.
+Double tapping on the card resets it to these.
 ```swift
-CodeCard(text, style: .paraiso, textStyle: .caption)
+CodeCard(text, textStyle: .caption, style: .paraiso)
 ```
 
-### CodeText
+#### `CodeText`
 
 Use like a standard `Text` view, with modifiers such as `.font()`.
 ```swift
-let text: String = "@State var isOn: Bool = true"
+let text: String = """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+"""
 
 var body: some View {
     CodeText(text)
@@ -68,11 +78,17 @@ CodeText(text) { result in
 }
 ```
 
-### Highlight
+#### `Highlight`
 
 Convert a code `String` into a syntax highlighted `AttributedString`:
 ```swift
-let text: String = "@State var isOn: Bool = true"
+let text: String = """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+"""
 let code: AttributedString = Highlight.code(text)
 ```
 
@@ -96,7 +112,6 @@ let code: AttributedString = Highlight.code(text, language: "swift")
 Add this git repository in Package.swift or to Package Dependencies in your project:
 ```swift
 dependencies: [
-    ...,
     .package(url: "https://github.com/appstefan/highlightswift.git", from: "1.0.0")
 ]
 ```
