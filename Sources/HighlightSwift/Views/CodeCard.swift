@@ -159,21 +159,23 @@ public struct CodeCard: View {
 @available(iOS 16.1, *)
 struct CodeCard_Previews: PreviewProvider {
     static let python: String = """
-    def factorial(n):
-        if n == 0:
-            return 1
-        else:
-            return n * factorial(n-1)
+    def fibonacci(n):
+        \"""Return a list containing the Fibonacci series up to n.\"""
+        result = []
+        a, b = 0, 1
+        while a < n:
+            result.append(a)
+            a, b = b, a + b
+        return result
 
-    try:
-        print(factorial(5))
-    except RecursionError:
-        print("Too large input.")
+    # Call the function and print the results
+    fib_series = fibonacci(100)
+    print(fib_series)
     """
     
     static var previews: some View {
         ScrollView {
-            CodeCard(python, textStyle: .body, style: .atomOne)
+            CodeCard(python, textStyle: .caption)
                 .padding()
         }
     }
