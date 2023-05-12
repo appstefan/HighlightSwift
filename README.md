@@ -1,6 +1,6 @@
 # HighlightSwift
 
-Simple Syntax Highlighting for Swift and SwiftUI
+Code Syntax Highlighting for Swift and SwiftUI
 
 ## Contents
 
@@ -14,8 +14,8 @@ Convert a plain `String` of code into a highlighted `AttributedString`
 #### `CodeText`
 Drop-in replacement for the standard `Text` view
 * ⬜️ Clear background by default
-* 🌗 Color style updates with Dark Mode
-* 🔠 Works with normal `.font()` modifier
+* 🌗 Color style syncs with Dark Mode
+* 🔠 Works with the `.font()` modifier
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -35,9 +35,8 @@ App-ready interactive card built around the `CodeText` view
   <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/db4d5102-590e-40fc-8d73-3eb226f336b9" width=42% height=42%>
 </picture>
 
-## Usage
-
-#### `CodeText`
+## `CodeText`
+### Usage
 
 Create a `CodeText` view with a `String` of code:
 ```swift
@@ -47,14 +46,14 @@ let text: String = """
             return 1
         else:
             return n * factorial(n-1)
-  """
+    """
 
 var body: some View {
     CodeText(text)
 }
 ```
 
-Use the `.font()` modifier to adjust the size and/or weight.
+Use the standard `.font()` modifier to adjust the font size and/or weight.
 The design is set internally to `.monospaced`:
 ```swift
 CodeText(text)
@@ -88,15 +87,15 @@ let text: String = """
             return 1
         else:
             return n * factorial(n-1)
-  """
+    """
 
 var body: some View {
     CodeCard(text)
 }
 ```
 
-Optionally, set the inital `textStyle` and `style`.
-A double tap on the card resets it to these values:
+Optionally, provide the inital `textStyle` and `style`.
+Double tapping on the card resets it to these values:
 ```swift
 CodeCard(text, textStyle: .caption, style: .paraiso)
 ```
@@ -111,7 +110,7 @@ let text: String = """
             return 1
         else:
             return n * factorial(n-1)
-  """
+    """
 let code: AttributedString = Highlight.code(text)
 ```
 
@@ -131,17 +130,30 @@ let code = Highlight.code(text) { result in
 }
 ```
 
-The `language` can be provided if known. This prevents automatic detection:
+A specfic `language` can be provided to avoid automatic detection:
 ```swift
 let code = Highlight.code(text, language: "swift")
 ```
 
 ## Installation
 
-Add this git repository in Package.swift or to Package Dependencies in your project:
+### Project
+
+1. In Xcode, go to `File` > `Add packages...`.
+2. Enter `https://github.com/appstefan/highlightswift` in the field and click `Add Package`.
+
+### Package
+
+In `Package.swift` add this repository as a dependency:
 ```swift
 dependencies: [
     .package(url: "https://github.com/appstefan/highlightswift.git", from: "1.0.0")
+],
+targets: [
+    .target(
+        name: "YourPackageName",
+        dependencies: ["HighlightSwift"]
+    )
 ]
 ```
 
