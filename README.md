@@ -1,6 +1,6 @@
 # HighlightSwift
 
-Code Syntax Highlighting for Swift and SwiftUI
+Syntax Highlighting for Swift and SwiftUI
 
 ## Contents
 
@@ -9,13 +9,9 @@ Convert a plain `String` of code into a highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Support for 36 common languages
 * 🎨 Choose from 30 snazzy color styles
-* 🧰 Based on [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
+* 🧰 Powered by [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 
 #### `CodeText`
-Drop-in replacement for the standard `Text` view
-* ⬜️ Clear background by default
-* 🌗 Color style syncs with Dark Mode
-* 🔠 Works with the `.font()` modifier
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -23,11 +19,12 @@ Drop-in replacement for the standard `Text` view
   <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/c5404300-5117-45af-9e12-7ae19d25c630" width=42% height=42%>
 </picture>
 
+Drop-in replacement for a SwiftUI `Text` view
+* ⬜️ Clear background by default
+* 🌗 Color style syncs with Dark Mode
+* 🔠 Based on `Text`, so modifiers like `.font()` work
+
 #### `CodeCard`
-App-ready interactive card built around the `CodeText` view
-* 🎨 Tap for controls
-* 🔄 Double tap to reset
-* 🕵🏻‍♂️ Displays detected language
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b6fa5521-58f1-46ff-a3c3-9a4129ad3c7f">
@@ -35,8 +32,12 @@ App-ready interactive card built around the `CodeText` view
   <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/db4d5102-590e-40fc-8d73-3eb226f336b9" width=42% height=42%>
 </picture>
 
-## `CodeText`
-### Usage
+App-ready interactive card built around the `CodeText` view
+* 🎨 Tap for controls
+* 🔄 Double tap to reset
+* 🕵🏻‍♂️ Displays detected language
+
+## How to use `CodeText`
 
 Create a `CodeText` view with a `String` of code:
 ```swift
@@ -77,7 +78,7 @@ CodeText(text) { result in
 }
 ```
 
-#### `CodeCard`
+## How to use `CodeCard`
 
 Create a `CodeCard` with a `String` of code:
 ```swift
@@ -100,7 +101,7 @@ Double tapping on the card resets it to these values:
 CodeCard(text, textStyle: .caption, style: .paraiso)
 ```
 
-#### `Highlight`
+#### How to use `Highlight`
 
 Convert a `String` of code into a syntax highlighted `AttributedString`:
 ```swift
@@ -112,6 +113,11 @@ let text: String = """
             return n * factorial(n-1)
     """
 let code: AttributedString = Highlight.code(text)
+```
+
+Providing a specific `language` bypasses automatic detection:
+```swift
+let code = Highlight.code(text, language: "swift")
 ```
 
 Customize with a specific style and color scheme:
@@ -128,11 +134,6 @@ let code = Highlight.code(text) { result in
     print("relevance: \(result.relevance)")
     print("background color: \(result.backgroundColor)")
 }
-```
-
-A specfic `language` can be provided to avoid automatic detection:
-```swift
-let code = Highlight.code(text, language: "swift")
 ```
 
 ## Installation
