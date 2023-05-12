@@ -64,14 +64,14 @@ CodeText(text, style: .paraiso, showBackground: true)
     .font(.body)
 ```
 
-Use the result callback to get the detected language and other details:
+The result callback includes the detected language and other details:
 ```swift
 CodeText(text) { result in
-    print("text: \(result.text)")
-    print("illegal: \(result.illegal)")
-    print("language: \(result.language)")
-    print("relevance: \(result.relevance)")
-    print("background: \(result.backgroundColor)")
+    let text: AttributedString = result.text
+    let illegal: Bool = result.illegal
+    let language: String = result.language
+    let relevance: Int32 = result.relevance
+    let backgroundColor: Color = result.backgroundColor
 }
 ```
 
@@ -110,28 +110,29 @@ let text: String = """
         else:
             return n * factorial(n-1)
     """
-let code: AttributedString = Highlight.code(text)
+    
+let result = try await Highlight.code(text)
+let text: AttributedString = result.text
+```
+
+The result also includes the detected language and other details:
+```swift
+...
+let illegal: Bool = result.illegal
+let language: String = result.language
+let relevance: Int32 = result.relevance
+let backgroundColor: Color = result.backgroundColor
 ```
 
 Use the `language:` parameter to skip automatic detection:
 ```swift
-let code = Highlight.code(text, language: "swift")
+let highlightResult = try await Highlight.code(text, language: "swift")
 ```
 
 Use the `style:` parameter specific style and color scheme:
 ```swift
-let style = HighlightStyle(.solarFlare, colorScheme: .dark)
-let code = Highlight.code(text, style: style)
-```
-
-Use the result callback to get the detected language and other details:
-```swift
-let code = Highlight.code(text) { result in
-    print("illegal: \(result.illegal)")
-    print("language: \(result.language)")
-    print("relevance: \(result.relevance)")
-    print("background color: \(result.backgroundColor)")
-}
+let highlightStyle = HighlightStyle(.solarFlare, colorScheme: .dark)
+let highlightResult = try await Highlight.code(text, style: highlightStyle)
 ```
 
 ## Installation
