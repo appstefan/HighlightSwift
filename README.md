@@ -15,7 +15,7 @@ Converts a `String` of code into a highlighted `AttributedString`
 Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
 * ⬜️ Clear or color style background
 * 🌗 Color style syncs with environment `ColorScheme`
-* 🔠 Based on `Text` so modifiers like `.font()` just work
+* 🔠 Based on `Text` so modifiers like `.font()` still work
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -25,8 +25,8 @@ Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
 
 #### `CodeCard`
 App-ready interactive card built around the `CodeText` view
-* 🔦 Displays detected language
-* 🎨 Tap for style controls, double tap to reset
+* 💬 Displays detected language
+* 👆 Tap for style controls, double tap to reset
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b6fa5521-58f1-46ff-a3c3-9a4129ad3c7f">
@@ -51,20 +51,20 @@ var body: some View {
 }
 ```
 
-Use the `.font()` modifier to adjust the font size and/or weight.
-The design is set internally to `.monospaced`:
+Use a `.font()` modifier as usual to adjust the font size and/or weight.
+The design will always remain `.monospaced`:
 ```swift
 CodeText(text)
     .font(.system(.callout, weight: .semibold))
 ```
 
-Optionally, use the `style` and `showBackground` parameters to adjust the appearance:
+Use the `style:` and `showBackground:` parameters to adjust the appearance:
 ```swift
 CodeText(text, style: .paraiso, showBackground: true)
     .font(.body)
 ```
 
-The result callback provides the detected language and other details:
+Use the result callback to get the detected language and other details:
 ```swift
 CodeText(text) { result in
     print("text: \(result.text)")
@@ -93,8 +93,7 @@ var body: some View {
 }
 ```
 
-Optionally, provide the inital `textStyle` and `style`.
-Double tapping on the card resets it to these values:
+Use the `textStyle:` and `style:` parameters to adjust the initial appearance:
 ```swift
 CodeCard(text, textStyle: .caption, style: .paraiso)
 ```
@@ -114,18 +113,18 @@ let text: String = """
 let code: AttributedString = Highlight.code(text)
 ```
 
-Providing a specific `language` bypasses automatic detection:
+Use the `language:` parameter to skip automatic detection:
 ```swift
 let code = Highlight.code(text, language: "swift")
 ```
 
-Customize with a specific style and color scheme:
+Use the `style:` parameter specific style and color scheme:
 ```swift
 let style = HighlightStyle(.solarFlare, colorScheme: .dark)
 let code = Highlight.code(text, style: style)
 ```
 
-The result callback provides the detected language and other details:
+Use the result callback to get the detected language and other details:
 ```swift
 let code = Highlight.code(text) { result in
     print("illegal: \(result.illegal)")
