@@ -5,7 +5,7 @@ Simple Syntax Highlighting for Swift and SwiftUI
 ## Contents
 
 #### `Highlight`
-Converts a `String` of code into a highlighted `AttributedString`
+Convert a plain `String` of code into a highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Support for 36 common languages
 * 🎨 Choose from 30 snazzy color styles
@@ -14,8 +14,8 @@ Converts a `String` of code into a highlighted `AttributedString`
 #### `CodeText`
 Drop-in replacement for the standard `Text` view
 * ⬜️ Clear background by default
-* 🔠 Works with SwiftUI font modifier
 * 🌗 Color style updates with Dark Mode
+* 🔠 Works with normal `.font()` modifier
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -42,12 +42,12 @@ App-ready interactive card built around the `CodeText` view
 Create a `CodeText` view with a `String` of code:
 ```swift
 let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
-"""
+    def factorial(n):
+        if n == 0:
+            return 1
+        else:
+            return n * factorial(n-1)
+  """
 
 var body: some View {
     CodeText(text)
@@ -83,12 +83,12 @@ CodeText(text) { result in
 Create a `CodeCard` with a `String` of code:
 ```swift
 let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
-"""
+    def factorial(n):
+        if n == 0:
+            return 1
+        else:
+            return n * factorial(n-1)
+  """
 
 var body: some View {
     CodeCard(text)
@@ -106,12 +106,12 @@ CodeCard(text, textStyle: .caption, style: .paraiso)
 Convert a `String` of code into a syntax highlighted `AttributedString`:
 ```swift
 let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
-"""
+    def factorial(n):
+        if n == 0:
+            return 1
+        else:
+            return n * factorial(n-1)
+  """
 let code: AttributedString = Highlight.code(text)
 ```
 
@@ -124,9 +124,9 @@ let code = Highlight.code(text, style: style)
 The result callback provides the detected language and other details:
 ```swift
 let code = Highlight.code(text) { result in
+    print("illegal: \(result.illegal)")
     print("language: \(result.language)")
     print("relevance: \(result.relevance)")
-    print("found illegal: \(result.illegal)")
     print("background color: \(result.backgroundColor)")
 }
 ```
