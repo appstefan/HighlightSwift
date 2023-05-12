@@ -18,9 +18,9 @@ Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
 * 🔠 Based on `Text` so modifiers like `.font()` still work
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c5404300-5117-45af-9e12-7ae19d25c630">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/c5404300-5117-45af-9e12-7ae19d25c630" width=42% height=42%>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=42% height=42%>
 </picture>
 
 #### `CodeCard`
@@ -29,9 +29,9 @@ App-ready interactive card built around the `CodeText` view
 * 👆 Tap for style controls, double tap to reset
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b6fa5521-58f1-46ff-a3c3-9a4129ad3c7f">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/db4d5102-590e-40fc-8d73-3eb226f336b9">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/db4d5102-590e-40fc-8d73-3eb226f336b9" width=42% height=42%>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
+  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=42% height=42%>
 </picture>
 
 ## How to use
