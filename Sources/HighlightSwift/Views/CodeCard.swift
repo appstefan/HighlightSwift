@@ -22,8 +22,13 @@ public struct CodeCard: View {
     let initialTextStyle: Font.TextStyle
     let initialStyleName: HighlightStyle.Name
 
+    /// Creates a card view that displays syntax highlighted code.
+    /// - Parameters:
+    ///   - text: The code as plain text
+    ///   - textStyle: The initial font text style (default: .caption).
+    ///   - style: The initial highlight color style (default: .stackoverflow).
     public init(_ text: String,
-                textStyle: Font.TextStyle = .caption2,
+                textStyle: Font.TextStyle = .caption,
                 style: HighlightStyle.Name = .stackoverflow) {
         self.text = text
         self.initialStyleName = style
@@ -175,7 +180,7 @@ struct CodeCard_Previews: PreviewProvider {
     
     static var previews: some View {
         ScrollView {
-            CodeCard(python, textStyle: .caption)
+            CodeCard(python, textStyle: .callout, style: .solarFlare)
                 .padding()
         }
     }

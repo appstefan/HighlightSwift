@@ -20,6 +20,13 @@ public struct CodeText: View {
     let showBackground: Bool
     let onHighlightResult: ((HighlightResult) -> Void)?
 
+    /// Creates a text view that displays syntax highlighted code.
+    /// - Parameters:
+    ///   - text: The plain text code to highlight.
+    ///   - style: The highlight color style to use (default: .stackoverflow).
+    ///   - language: The language to use (default: nil/automatic).
+    ///   - showBackground: Show the background of the highlight color style (default: false).
+    ///   - onHighlightResult: Callback with the result of the syntax highlight (default: nil).
     public init(_ text: String,
                 style: HighlightStyle.Name = .stackoverflow,
                 language: String? = nil,

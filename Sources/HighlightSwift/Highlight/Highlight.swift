@@ -5,6 +5,13 @@ public actor Highlight {
     private var hljs: JSValue?
     private static let shared = Highlight()
     
+    /// Attempts to syntax highlight the specified text.
+    /// - Parameters:
+    ///   - text: The plain text code to highlight.
+    ///   - language: The language to use (default: nil/automatic).
+    ///   - style: The highlight color style to use (default: .stackoverflow/.light).
+    /// - Throws: Either a HighlightError or an Error.
+    /// - Returns: The result of the syntax highlight.
     public static func text(_ text: String,
                             language: String? = nil,
                             style: HighlightStyle = HighlightStyle(.stackoverflow)) async throws -> HighlightResult {
