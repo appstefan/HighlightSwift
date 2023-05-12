@@ -14,8 +14,8 @@ Converts a `String` of code into a highlighted `AttributedString`
 #### `CodeText`
 Drop-in replacement for a `Text` view with syntax highlighting
 * ⬜️ Clear background by default
-* 🌗 Color style syncs with Dark Mode
-* 🔠 Based on `Text`, so modifiers like `.font()` work
+* 🌗 Color style syncs with system Dark Mode
+* 🔠 Based on `Text` and supports `.font()` modifier
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -52,7 +52,7 @@ var body: some View {
 }
 ```
 
-Use the standard `.font()` modifier to adjust the font size and/or weight.
+Use the `.font()` modifier to adjust the font size and/or weight.
 The design is set internally to `.monospaced`:
 ```swift
 CodeText(text)
