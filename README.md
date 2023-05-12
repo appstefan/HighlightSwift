@@ -2,6 +2,12 @@
 
 Syntax Highlighting for Swift and SwiftUI
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="[https://github.com/appstefan/HighlightSwift/assets/6455394/a953d3a4-f2ab-4099-8cad-51c43f01fc8f](https://github.com/appstefan/HighlightSwift/assets/6455394/7d84a45d-442c-4a0e-8fa1-834dcbc339c7)">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5155cb6d-ab8a-4c5e-9860-7ff64f1b0922">
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5155cb6d-ab8a-4c5e-9860-7ff64f1b0922" width=50% height=50%>
+</picture>
+
 ## Contents
 
 #### `Highlight`
@@ -9,18 +15,18 @@ Converts a `String` of code into a highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Support for 36 common languages
 * 🌈 Choose from 30 snazzy color styles
-* 🧰 Powered by [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
+* 🧰 Based on [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 
 #### `CodeText`
 Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
-* ⬜️ Clear or color style background
-* 🌗 Color style syncs with environment `ColorScheme`
+* ⬜️ Clear or style colored background
+* 🌗 All color styles sync with environment `ColorScheme`
 * 🔠 Based on `Text` so modifiers like `.font()` still work
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=42% height=42%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=50% height=50%>
 </picture>
 
 #### `CodeCard`
@@ -31,7 +37,7 @@ App-ready interactive card built around the `CodeText` view
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=42% height=42%>
+  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=50% height=50%>
 </picture>
 
 ## How to use
@@ -161,8 +167,8 @@ targets: [
 
 Stefan, thrower_ranges.0d@icloud.com
 
-## Licence
+## License
 
-HighlightSwift is available under the MIT license. See the license file [here](/LICENSE).
+HighlightSwift is available under the MIT license. See [LICENSE.md](/LICENSE).
 
-Highlight.js is available under the BSD license. See the license file [here](/Sources/HighlightSwift/HighlightJS/LICENSE.txt).
+Highlight.js is available under the BSD license. See [LICENSE.txt](/Sources/HighlightSwift/HighlightJS/LICENSE.txt).
