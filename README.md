@@ -1,4 +1,4 @@
-# HighlightSwift
+# HighlightSwift 🎨
 
 Syntax Highlighting for Swift and SwiftUI
 
@@ -8,14 +8,14 @@ Syntax Highlighting for Swift and SwiftUI
 Converts a `String` of code into a highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Support for 36 common languages
-* 🎨 Choose from 30 snazzy color styles
+* 🌈 Choose from 30 snazzy color styles
 * 🧰 Powered by [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 
 #### `CodeText`
-Drop-in replacement for a `Text` view with syntax highlighting
-* ⬜️ Clear background by default
-* 🌗 Color style syncs with system Dark Mode
-* 🔠 Based on `Text` and supports `.font()` modifier
+Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
+* ⬜️ Clear or color style background
+* 🌗 Color style syncs with environment `ColorScheme`
+* 🔠 Based on `Text` so modifiers like `.font()` just work
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/f8ec4cf4-80bd-49de-9ba4-f67effc4a9e4">
@@ -25,9 +25,8 @@ Drop-in replacement for a `Text` view with syntax highlighting
 
 #### `CodeCard`
 App-ready interactive card built around the `CodeText` view
-* 🎨 Tap for controls
-* 🔄 Double tap to reset
-* 🕵🏻‍♂️ Displays detected language
+* 🔦 Displays detected language
+* 🎨 Tap for style controls, double tap to reset
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b6fa5521-58f1-46ff-a3c3-9a4129ad3c7f">
