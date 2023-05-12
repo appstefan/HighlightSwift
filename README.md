@@ -129,7 +129,7 @@ Use the `language:` parameter to skip automatic detection:
 let highlightResult = try await Highlight.code(text, language: "swift")
 ```
 
-Use the `style:` parameter specific style and color scheme:
+Use the `style:` parameter to choose the style and color scheme:
 ```swift
 let highlightStyle = HighlightStyle(.solarFlare, colorScheme: .dark)
 let highlightResult = try await Highlight.code(text, style: highlightStyle)
