@@ -8,34 +8,45 @@ public actor Highlight {
     /// Attempts to syntax highlight the specified text.
     /// - Parameters:
     ///   - text: The plain text code to highlight.
-    ///   - language: The language to use (default: nil/automatic).
-    ///   - style: The highlight color style to use (default: .stackoverflow/.light).
+    ///   - language: The language to use (default: automatic).
+    ///   - style: The highlight color style to use (default: .xcode/.light).
     /// - Throws: Either a HighlightError or an Error.
     /// - Returns: The result of the syntax highlight.
     public static func text(_ text: String,
                             language: String? = nil,
-                            style: HighlightStyle = HighlightStyle(.stackoverflow)) async throws -> HighlightResult {
-        try await shared.text(text, language: language, style: style)
+                            style: HighlightStyle = .dark(.xcode)) async throws -> HighlightResult {
+        try await shared.text(
+            text,
+            language: language,
+            style: style
+        )
     }
     
     private func text(_ text: String,
                       language: String?,
                       style: HighlightStyle) throws -> HighlightResult {
+        let hljs = try loadHLJS()
         let highlightResult: JSValue
-        let hljs = try loadIfNeeded()
-        highlightResult = hljs.invokeMethod(
-            language != nil ? "highlight" : "highlightAuto",
-            withArguments: [text] + (language != nil ? [["language": language]] : [])
-        )
+        if let language {
+            highlightResult = hljs.invokeMethod("highlight", withArguments: [text, ["language": language]])
+        } else {
+            highlightResult = hljs.invokeMethod("highlightAuto", withArguments: [text])
+        }
+        let illegal = highlightResult.objectForKeyedSubscript("illegal").toBool()
+        let relevance = Int(highlightResult.objectForKeyedSubscript("relevance").toInt32())
         guard
             let value = highlightResult.objectForKeyedSubscript("value").toString(),
             let language = highlightResult.objectForKeyedSubscript("language").toString()
         else {
             throw HighlightError.valueNotFound
         }
-        let attributedText = try attributed(value, selectors: style.selectorsText)
-        let illegal = highlightResult.objectForKeyedSubscript("illegal").toBool()
-        let relevance = highlightResult.objectForKeyedSubscript("relevance").toInt32()
+        let data = try data(value, selectors: style.selectorsText)
+        let attributed = try attributed(data)
+#if os(macOS)
+        let attributedText = try AttributedString(attributed, including: \.appKit)
+#else
+        let attributedText = try AttributedString(attributed, including: \.uiKit)
+#endif
         return HighlightResult(
             text: attributedText,
             illegal: illegal,
@@ -44,28 +55,27 @@ public actor Highlight {
             background: style.backgroundHex
         )
     }
-   
-    private func loadIfNeeded() throws -> JSValue {
+    
+    private func loadHLJS() throws -> JSValue {
         if let hljs {
             return hljs
-        } else {
-            guard let context = JSContext() else {
-                throw HighlightError.contextNotFound
-            }
-            guard let highlightFilePath = Bundle.module.path(forResource: "highlight.min", ofType: "js") else {
-                throw HighlightError.fileNotFound
-            }
-            context.evaluateScript(try String(contentsOfFile: highlightFilePath))
-            guard let hljs = context.objectForKeyedSubscript("hljs") else {
-                throw HighlightError.hljsNotFound
-            }
-            self.hljs = hljs
-            return hljs
         }
+        guard let context = JSContext() else {
+            throw HighlightError.noJSContext
+        }
+        guard let highlightFilePath = Bundle.module.path(forResource: "highlight.min", ofType: "js") else {
+            throw HighlightError.fileNotFound
+        }
+        let highlightScript = try String(contentsOfFile: highlightFilePath)
+        context.evaluateScript(highlightScript)
+        guard let hljs = context.objectForKeyedSubscript("hljs") else {
+            throw HighlightError.hljsNotFound
+        }
+        self.hljs = hljs
+        return hljs
     }
     
-    private func attributed(_ value: String,
-                            selectors: String) throws -> AttributedString {
+    private func data(_ value: String, selectors: String) throws -> Data {
         let data = "<style>"
             .appending(selectors)
             .appending("</style>")
@@ -74,8 +84,12 @@ public actor Highlight {
             .appending("</code></pre>")
             .data(using: .utf8)
         guard let data else {
-            throw HighlightError.dataNotEncodable
+            throw HighlightError.dataEncoding
         }
+        return data
+    }
+    
+    private func attributed(_ data: Data) throws -> NSMutableAttributedString {
         let nsAttributedString = try NSMutableAttributedString(
             data: data,
             options: [
@@ -86,10 +100,6 @@ public actor Highlight {
         )
         let range = NSMakeRange(0, nsAttributedString.length)
         nsAttributedString.removeAttribute(.font, range: range)
-#if os(macOS)
-        return try AttributedString(nsAttributedString, including: \.appKit)
-#else
-        return try AttributedString(nsAttributedString, including: \.uiKit)
-#endif
+        return nsAttributedString
     }
 }

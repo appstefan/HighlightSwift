@@ -17,26 +17,26 @@ public struct CodeText: View {
     let text: String
     let language: String?
     let styleName: HighlightStyle.Name
-    let showBackground: Bool
-    let onHighlightResult: ((HighlightResult) -> Void)?
+    let background: Bool
+    let onHighlight: ((HighlightResult) -> Void)?
 
     /// Creates a text view that displays syntax highlighted code.
     /// - Parameters:
     ///   - text: The plain text code to highlight.
-    ///   - style: The highlight color style to use (default: .stackoverflow).
-    ///   - language: The language to use (default: nil/automatic).
-    ///   - showBackground: Show the background of the highlight color style (default: false).
-    ///   - onHighlightResult: Callback with the result of the syntax highlight (default: nil).
+    ///   - language: The language to use (default: automatic).
+    ///   - style: The highlight style name to use (default: .xcode).
+    ///   - background: Show the background color of the highlight style (default: false).
+    ///   - onHighlight: Callback with the result of each highlight attempt (default: nil).
     public init(_ text: String,
-                style: HighlightStyle.Name = .stackoverflow,
                 language: String? = nil,
-                showBackground: Bool = false,
-                onHighlightResult: ((HighlightResult) -> Void)? = nil) {
+                style styleName: HighlightStyle.Name = .xcode,
+                background: Bool = false,
+                onHighlight: ((HighlightResult) -> Void)? = nil) {
         self.text = text
-        self.styleName = style
         self.language = language
-        self.showBackground = showBackground
-        self.onHighlightResult = onHighlightResult
+        self.styleName = styleName
+        self.background = background
+        self.onHighlight = onHighlight
     }
     
     public var body: some View {
@@ -49,10 +49,10 @@ public struct CodeText: View {
             }
         }
         .fontDesign(.monospaced)
-        .padding(showBackground ? 8 : 0)
+        .padding(background ? 8 : 0)
         .background {
             if
-                showBackground,
+                background,
                 let highlightResult {
                 Rectangle()
                     .fill(highlightResult.backgroundColor)
@@ -98,7 +98,7 @@ public struct CodeText: View {
     
     @MainActor
     func didHighlightText(_ result: HighlightResult) {
-        onHighlightResult?(result)
+        onHighlight?(result)
         if highlightResult == nil {
             highlightResult = result
         } else {
@@ -111,24 +111,25 @@ public struct CodeText: View {
 
 @available(iOS 16.1, *)
 struct CodeText_Previews: PreviewProvider {
-    static let python: String = """
-    def fibonacci(n):
-        \"""Return a list containing the Fibonacci series up to n.\"""
-        result = []
-        a, b = 0, 1
-        while a < n:
-            result.append(a)
-            a, b = b, a + b
-        return result
+    static let code: String = """
+    import SwiftUI
 
-    # Call the function and print the results
-    fib_series = fibonacci(100)
-    print(fib_series)
+    struct SwiftUIView: View {
+        var body: some View {
+            Text("Hello World!")
+        }
+    }
+
+    struct SwiftUIView_Previews: PreviewProvider {
+        static var previews: some View {
+            SwiftUIView()
+        }
+    }
     """
     
     static var previews: some View {
-        CodeText(python, showBackground: true)
-            .font(.caption)
+        CodeText(code)
             .padding()
+            .font(.caption2)
     }
 }

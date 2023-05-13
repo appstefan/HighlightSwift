@@ -1,30 +1,53 @@
 import SwiftUI
 
 public struct HighlightResult: Equatable {
-    /// Syntax highlighted attributed text
+    /// The syntax highlighted attributed text
     public let text: AttributedString
-    /// Indicates if any illegal matches were found
+    /// Indicates that one or more illegal matches were found
     public let illegal: Bool
-    /// Detected language name (or specified language)
+    /// The detected language identifier
     public let language: String
-    /// Detected language relevance score
-    public let relevance: Int32
-    /// Background color
+    /// The detected language relevance score
+    public let relevance: Int
+    /// The detected language name
+    public let languageName: String
+    /// The styled background color
     public let backgroundColor: Color
     
     init(text: AttributedString,
          illegal: Bool,
          language: String,
-         relevance: Int32,
+         relevance: Int,
          background: String) {
         self.text = text
         self.illegal = illegal
         self.language = language
         self.relevance = relevance
-        self.backgroundColor = HighlightResult.color(background)
+        self.languageName = HighlightResult.languageName(language, relevance: relevance)
+        self.backgroundColor = HighlightResult.backgroundColor(background)
     }
     
-    private static func color(_ hex: String) -> Color {
+    private static func languageName(_ language: String, relevance: Int) -> String {
+        let name: String
+        switch language {
+        case "xml": name = "HTML"
+        case "cpp": name = "C++"
+        case "csharp": name = "C#"
+        case "graphql": name = "GraphQL"
+        case "javascript": name = "JavaScript"
+        case "typescript": name = "TypeScript"
+        case "objectivec": name = "Objective-C"
+        case "vbnet": name = "Visual Basic .NET"
+        case "php-template": name = "PHP Template"
+        case "css", "sql", "json", "php", "scss", "toml", "yaml", "wasm":
+            name = language.uppercased()
+        default:
+            name = language.capitalized
+        }
+        return name + (relevance <= 5 ? "?" : "")
+    }
+    
+    private static func backgroundColor(_ hex: String) -> Color {
         var int: UInt64 = 0
         let hexString = hex.trimmingCharacters(in: .alphanumerics.inverted)
         Scanner(string: hexString).scanHexInt64(&int)

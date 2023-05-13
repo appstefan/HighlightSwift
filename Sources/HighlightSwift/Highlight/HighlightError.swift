@@ -1,7 +1,7 @@
 public enum HighlightError: Error {
-    case contextNotFound
+    case noJSContext
     case fileNotFound
     case hljsNotFound
-    case dataNotEncodable
+    case dataEncoding
     case valueNotFound
 }

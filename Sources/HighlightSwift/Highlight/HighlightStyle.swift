@@ -1,28 +1,11 @@
 import SwiftUI
 
 public struct HighlightStyle {
+    public let name: Name
     let selectorsText: String
     let backgroundHex: String
     
-    public init(_ name: Name, colorScheme: ColorScheme = .light) {
-        switch colorScheme {
-        case .light:
-            self.selectorsText = String(describing: HighlightStyleSelectors.light(name))
-            self.backgroundHex = String(describing: HighlightStyleBackground.light(name))
-        case .dark:
-            self.selectorsText = String(describing: HighlightStyleSelectors.dark(name))
-            self.backgroundHex = String(describing: HighlightStyleBackground.dark(name))
-        @unknown default:
-            self.selectorsText = ""
-            self.backgroundHex = ""
-        }
-    }
-    
     public enum Name: String, CaseIterable, Identifiable, Equatable {
-        public var id: String {
-            rawValue
-        }
-        
         case a11y = "a11y"
         case atomOne = "Atom One"
         case classic = "Classic"
@@ -53,5 +36,32 @@ public struct HighlightStyle {
         case tokyoNight = "Tokyo Night"
         case unikitty = "Unikitty"
         case xcode = "Xcode"
+        
+        public var id: String {
+            rawValue
+        }
+    }
+    
+    public static func dark(_ name: Name) -> HighlightStyle {
+        HighlightStyle(name, colorScheme: .dark)
+    }
+    
+    public static func light(_ name: Name) -> HighlightStyle {
+        HighlightStyle(name, colorScheme: .light)
+    }
+    
+    public init(_ name: Name, colorScheme: ColorScheme) {
+        self.name = name
+        switch colorScheme {
+        case .light:
+            self.selectorsText = String(describing: HighlightStyleSelectors.light(name))
+            self.backgroundHex = String(describing: HighlightStyleBackground.light(name))
+        case .dark:
+            self.selectorsText = String(describing: HighlightStyleSelectors.dark(name))
+            self.backgroundHex = String(describing: HighlightStyleBackground.dark(name))
+        @unknown default:
+            self.selectorsText = ""
+            self.backgroundHex = ""
+        }
     }
 }

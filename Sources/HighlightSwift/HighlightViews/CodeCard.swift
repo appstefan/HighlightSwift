@@ -21,15 +21,15 @@ public struct CodeCard: View {
     let text: String
     let initialTextStyle: Font.TextStyle
     let initialStyleName: HighlightStyle.Name
-
+    
     /// Creates a card view that displays syntax highlighted code.
     /// - Parameters:
-    ///   - text: The code as plain text
-    ///   - textStyle: The initial font text style (default: .caption).
-    ///   - style: The initial highlight color style (default: .stackoverflow).
+    ///   - text: The plain text code to highlight.
+    ///   - style: The initial highlight color style (default: .xcode).
+    ///   - textStyle: The initial font text style (default: .caption2).
     public init(_ text: String,
-                textStyle: Font.TextStyle = .caption,
-                style: HighlightStyle.Name = .stackoverflow) {
+                style: HighlightStyle.Name = .xcode,
+                textStyle: Font.TextStyle = .caption2) {
         self.text = text
         self.initialStyleName = style
         self.initialTextStyle = textStyle
@@ -39,7 +39,8 @@ public struct CodeCard: View {
     
     public var body: some View {
         ZStack(alignment: .topTrailing) {
-            Color.clear
+            Color
+                .clear
                 .contentShape(Rectangle())
                 .onTapGesture(count: 2, perform: resetStyle)
                 .onTapGesture(perform: toggleShowButtons)
@@ -60,7 +61,7 @@ public struct CodeCard: View {
                 }
                 Spacer(minLength: 12)
                 if let highlightResult {
-                    languageText(highlightResult)
+                    languageName(highlightResult)
                 }
             }
         }
@@ -120,7 +121,7 @@ public struct CodeCard: View {
     var styleControls: some View {
         VStack(spacing: 12) {
             Button(action: toggleFontTextStyle) {
-                systemImageText("textformat.size")
+                systemImage("textformat.size")
             }
             Menu {
                 Picker("Style", selection: $styleName) {
@@ -130,28 +131,28 @@ public struct CodeCard: View {
                     }
                 }
             } label: {
-                systemImageText("paintpalette")
+                systemImage("paintpalette")
             }
             .menuStyle(.button)
         }
     }
     
-    func systemImageText(_ systemName: String) -> some View {
+    func systemImage(_ systemName: String) -> some View {
         Text("\(Image(systemName: systemName))")
-            .font(.system(.callout, weight: .semibold))
-            .foregroundColor(Color.secondary.opacity(0.7))
-            .frame(width: 36, height: 36)
+            .font(.callout)
+            .foregroundColor(.secondary)
+            .frame(width: 34, height: 34)
             .background {
                 Circle()
                     .fill(.ultraThinMaterial)
             }
     }
     
-    func languageText(_ result: HighlightResult) -> some View {
-        Text("\(result.language.capitalized)" + (result.relevance > 5 ? "" : "?"))
-            .opacity(0.7)
+    func languageName(_ result: HighlightResult) -> some View {
+        Text(result.languageName)
+            .font(.caption2)
+            .fontWeight(.semibold)
             .foregroundColor(.secondary)
-            .font(.system(.caption2, weight: .semibold))
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background {
@@ -163,24 +164,25 @@ public struct CodeCard: View {
 
 @available(iOS 16.1, *)
 struct CodeCard_Previews: PreviewProvider {
-    static let python: String = """
-    def fibonacci(n):
-        \"""Return a list containing the Fibonacci series up to n.\"""
-        result = []
-        a, b = 0, 1
-        while a < n:
-            result.append(a)
-            a, b = b, a + b
-        return result
+    static let code: String = """
+    import SwiftUI
 
-    # Call the function and print the results
-    fib_series = fibonacci(100)
-    print(fib_series)
+    struct SwiftUIView: View {
+        var body: some View {
+            Text("Hello World!")
+        }
+    }
+
+    struct SwiftUIView_Previews: PreviewProvider {
+        static var previews: some View {
+            SwiftUIView()
+        }
+    }
     """
     
     static var previews: some View {
         ScrollView {
-            CodeCard(python, textStyle: .callout, style: .solarFlare)
+            CodeCard(code)
                 .padding()
         }
     }
