@@ -3,19 +3,20 @@
 Syntax Highlighting in Swift and SwiftUI
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c55e9142-1c88-4b18-bb34-f454796de826">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=50% height=50%>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/892a5be0-146e-4cb8-90ca-559c2c67452c">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c8b3f63f-4831-4117-b302-37623e44be99">
+  <img alt="CodeCardDemo" src="https://github.com/appstefan/HighlightSwift/assets/6455394/c8b3f63f-4831-4117-b302-37623e44be99" width=50% height=50%>
 </picture>
 
 ## Contents
 
 #### `Highlight`
-Convert any `String` of code into a highlighted `AttributedString`
+Convert any `String` of code into a syntax highlighted `AttributedString`
 * 🔍 Automatic language detection
-* 📚 Support for 36 common languages
-* 🌈 Choose from 30 snazzy color styles
+* 📚 Works for 50 common languages
+* 🌈 Choose from 30 dark/light color styles
 * 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
+* 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
 
 #### `CodeText`
 Drop-in replacement for the SwiftUI `Text` view
@@ -30,8 +31,8 @@ Drop-in replacement for the SwiftUI `Text` view
 </picture>
 
 #### `CodeCard`
-Simple card view built with the `CodeText` view
-* 💬 Displays detected language
+Simple iOS card view built with the `CodeText` view
+* 💬 Displays the detected language
 * 👆 Tap for style controls, double tap to reset
 
 <picture>
@@ -41,24 +42,59 @@ Simple card view built with the `CodeText` view
 </picture>
 
 ## How to use
+### `Highlight`
+
+Convert a `String` of code into a syntax highlighted `AttributedString`:
+```swift
+let text: String = """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+"""
+    
+let result = try await Highlight.code(text)
+let attributedText: AttributedString = result.text
+```
+
+The result also includes the detected language and other details:
+```swift
+...
+let illegal: Bool = result.illegal
+let language: String = result.language
+let relevance: Int32 = result.relevance
+let languageName: String = result.languageName
+let backgroundColor: Color = result.backgroundColor
+```
+
+Use the `language:` parameter to skip automatic detection:
+```swift
+let highlightResult = try await Highlight.code(text, language: "swift")
+```
+
+Use the `style:` parameter to set the highlight style and color scheme:
+```swift
+let highlightResult = try await Highlight.code(text, style: .dark(.solarFlare))
+```
+##
 ### `CodeText`
 Create a `CodeText` view with a `String` of code:
 ```swift
 let text: String = """
-    def factorial(n):
-        if n == 0:
-            return 1
-        else:
-            return n * factorial(n-1)
-    """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+"""
 
 var body: some View {
     CodeText(text)
 }
 ```
 
-Use a `.font()` modifier as usual to adjust the font size and/or weight.
-The design will always remain `.monospaced`:
+Some `Text` modifiers like `.font()` work. `.fontDesign()` and `.fontWidth()` have no effect:
 ```swift
 CodeText(text)
     .font(.system(.callout, weight: .semibold))
@@ -66,17 +102,18 @@ CodeText(text)
 
 Use the `style:` and `showBackground:` parameters to adjust the appearance:
 ```swift
-CodeText(text, style: .paraiso, showBackground: true)
+CodeText(text, style: .atomOne, showBackground: true)
     .font(.body)
 ```
 
 The result callback includes the detected language and other details:
 ```swift
 CodeText(text) { result in
-    let text: AttributedString = result.text
     let illegal: Bool = result.illegal
     let language: String = result.language
     let relevance: Int32 = result.relevance
+    let languageName: String = result.languageName
+    let attributedText: AttributedString = result.text
     let backgroundColor: Color = result.backgroundColor
 }
 ```
@@ -87,58 +124,21 @@ CodeText(text) { result in
 Create a `CodeCard` with a `String` of code:
 ```swift
 let text: String = """
-    def factorial(n):
-        if n == 0:
-            return 1
-        else:
-            return n * factorial(n-1)
-    """
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n - 1)
+"""
 
 var body: some View {
     CodeCard(text)
 }
 ```
 
-Use the `textStyle:` and `style:` parameters to adjust the initial appearance:
+Use the `style:` and `textStyle:` parameters to adjust the initial appearance:
 ```swift
-CodeCard(text, textStyle: .caption, style: .paraiso)
-```
-
-##
-### `Highlight`
-
-Convert a `String` of code into a syntax highlighted `AttributedString`:
-```swift
-let text: String = """
-    def factorial(n):
-        if n == 0:
-            return 1
-        else:
-            return n * factorial(n-1)
-    """
-    
-let result = try await Highlight.code(text)
-let text: AttributedString = result.text
-```
-
-The result also includes the detected language and other details:
-```swift
-...
-let illegal: Bool = result.illegal
-let language: String = result.language
-let relevance: Int32 = result.relevance
-let backgroundColor: Color = result.backgroundColor
-```
-
-Use the `language:` parameter to skip automatic detection:
-```swift
-let highlightResult = try await Highlight.code(text, language: "swift")
-```
-
-Use the `style:` parameter to choose the style and color scheme:
-```swift
-let highlightStyle = HighlightStyle(.solarFlare, colorScheme: .dark)
-let highlightResult = try await Highlight.code(text, style: highlightStyle)
+CodeCard(text, style: .paraiso, textStyle: .caption)
 ```
 
 ## Installation
@@ -169,6 +169,6 @@ Stefan, thrower_ranges.0d@icloud.com
 
 ## License
 
-HighlightSwift is available under the MIT license. See [LICENSE.md](/LICENSE).
+HighlightSwift is available under the MIT license. See the [LICENSE.md](/LICENSE.md) file.
 
-Highlight.js is available under the BSD license. See [LICENSE.txt](/Sources/HighlightSwift/HighlightJS/LICENSE.txt).
+Highlight.js is available under the BSD license. See the [LICENSE.md](/Sources/HighlightSwift/HighlightJS/LICENSE.md) file.
