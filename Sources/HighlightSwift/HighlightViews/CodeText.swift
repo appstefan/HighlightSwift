@@ -1,6 +1,7 @@
 import SwiftUI
 
 @available(iOS 16.1, *)
+@available(tvOS 16.1, *)
 public struct CodeText: View {
     @Environment(\.colorScheme)
     var colorScheme
@@ -110,6 +111,7 @@ public struct CodeText: View {
 }
 
 @available(iOS 16.1, *)
+@available(tvOS 16.1, *)
 struct CodeText_Previews: PreviewProvider {
     static let code: String = """
     import SwiftUI
