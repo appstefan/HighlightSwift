@@ -11,33 +11,33 @@ Syntax Highlighting in Swift and SwiftUI
 ## Contents
 
 #### `Highlight`
-Converts a `String` of code into a highlighted `AttributedString`
+Convert any `String` of code into a highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Support for 36 common languages
 * 🌈 Choose from 30 snazzy color styles
-* 🧰 Based on [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
+* 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 
 #### `CodeText`
-Drop-in syntax highlighting replacement for the SwiftUI `Text` view 
+Drop-in replacement for the SwiftUI `Text` view
 * ⬜️ Clear or style-colored background
 * 🌗 All the color styles sync with Dark Mode
-* 🔠 Supports all `Text` modifiers like `.font()`
+* 🔠 Supports most `Text` modifiers like `.font()`
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=54% height=54%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=50% height=50%>
 </picture>
 
 #### `CodeCard`
-Fancy interactive card to showcase the `CodeText` view
+Simple card view built with the `CodeText` view
 * 💬 Displays detected language
 * 👆 Tap for style controls, double tap to reset
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=54% height=54%>
+  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=50% height=50%>
 </picture>
 
 ## How to use
