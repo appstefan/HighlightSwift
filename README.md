@@ -5,7 +5,7 @@ Syntax Highlighting in Swift and SwiftUI
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c55e9142-1c88-4b18-bb34-f454796de826">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=54% height=54%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=50% height=50%>
 </picture>
 
 ## Contents
@@ -37,7 +37,7 @@ Fancy interactive card to showcase the `CodeText` view
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=50% height=50%>
+  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=54% height=54%>
 </picture>
 
 ## How to use
