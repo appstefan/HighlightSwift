@@ -5,7 +5,7 @@ Syntax Highlighting in Swift and SwiftUI
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c55e9142-1c88-4b18-bb34-f454796de826">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=50% height=50%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=54% height=54%>
 </picture>
 
 ## Contents
@@ -26,7 +26,7 @@ Drop-in syntax highlighting replacement for the SwiftUI `Text` view
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=50% height=50%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=54% height=54%>
 </picture>
 
 #### `CodeCard`
