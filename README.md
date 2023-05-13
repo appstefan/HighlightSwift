@@ -1,11 +1,11 @@
 # HighlightSwift 🎨
 
-Syntax Highlighting for Swift and SwiftUI
+Syntax Highlighting in Swift and SwiftUI
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="[https://github.com/appstefan/HighlightSwift/assets/6455394/a953d3a4-f2ab-4099-8cad-51c43f01fc8f](https://github.com/appstefan/HighlightSwift/assets/6455394/7d84a45d-442c-4a0e-8fa1-834dcbc339c7)">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5155cb6d-ab8a-4c5e-9860-7ff64f1b0922">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5155cb6d-ab8a-4c5e-9860-7ff64f1b0922" width=50% height=50%>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c55e9142-1c88-4b18-bb34-f454796de826">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc">
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/49b64b59-51fc-4cce-bffb-e322cb348fcc" width=50% height=50%>
 </picture>
 
 ## Contents
@@ -18,10 +18,10 @@ Converts a `String` of code into a highlighted `AttributedString`
 * 🧰 Based on [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 
 #### `CodeText`
-Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
-* ⬜️ Clear or style colored background
-* 🌗 All color styles sync with environment `ColorScheme`
-* 🔠 Based on `Text` so modifiers like `.font()` still work
+Drop-in syntax highlighting replacement for the SwiftUI `Text` view 
+* ⬜️ Clear or style-colored background
+* 🌗 All the color styles sync with Dark Mode
+* 🔠 Supports all `Text` modifiers like `.font()`
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
@@ -30,7 +30,7 @@ Drop-in replacement for a SwiftUI `Text` view with syntax highlighting
 </picture>
 
 #### `CodeCard`
-App-ready interactive card built around the `CodeText` view
+Fancy interactive card to showcase the `CodeText` view
 * 💬 Displays detected language
 * 👆 Tap for style controls, double tap to reset
 
