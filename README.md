@@ -1,5 +1,10 @@
 # HighlightSwift 🎨
 
+![](https://img.shields.io/github/v/release/appstefan/highlightswift)
+![](https://img.shields.io/github/license/appstefan/highlightswift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fappstefan%2FHighlightSwift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/appstefan/HighlightSwift)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fappstefan%2FHighlightSwift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/appstefan/HighlightSwift)
+
 Syntax Highlighting in Swift and SwiftUI
 
 <picture>
@@ -14,15 +19,15 @@ Syntax Highlighting in Swift and SwiftUI
 Convert any `String` of code into a syntax highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Works for 50 common languages
-* 🌈 Choose from 30 dark/light color styles
+* 🌈 Choose from 30 classic color styles
 * 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 * 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
 
 #### `CodeText`
 Drop-in replacement for the SwiftUI `Text` view
 * ⬜️ Clear or style-colored background
-* 🌗 All the color styles sync with Dark Mode
 * 🔠 Supports most `Text` modifiers like `.font()`
+* 🌗 Color style syncs automatically with Dark Mode
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
@@ -60,7 +65,6 @@ let attributedText: AttributedString = result.text
 
 The result also includes the detected language and other details:
 ```swift
-...
 let illegal: Bool = result.illegal
 let language: String = result.language
 let relevance: Int32 = result.relevance
@@ -94,7 +98,7 @@ var body: some View {
 }
 ```
 
-Some `Text` modifiers like `.font()` work. `.fontDesign()` and `.fontWidth()` have no effect:
+Most `Text` modifiers like `.font()` work as normal, just the font design and width cannot be changed:
 ```swift
 CodeText(text)
     .font(.system(.callout, weight: .semibold))
