@@ -1,4 +1,3 @@
-import OSLog
 import JavaScriptCore
 
 public actor Highlight {
@@ -9,50 +8,75 @@ public actor Highlight {
     /// - Parameters:
     ///   - text: The plain text code to highlight.
     ///   - language: The language to use (default: automatic).
+    ///   - ignoreIllegals: Whether to ignore illegal matches (default: false).
     ///   - style: The highlight color style to use (default: .xcode/.light).
     /// - Throws: Either a HighlightError or an Error.
     /// - Returns: The result of the syntax highlight.
     public static func text(_ text: String,
                             language: String? = nil,
+                            ignoreIllegals: Bool? = nil,
                             style: HighlightStyle = .dark(.xcode)) async throws -> HighlightResult {
-        try await shared.text(
+        try await shared.highlight(
             text,
             language: language,
+            ignoreIllegals: ignoreIllegals,
             style: style
         )
     }
     
-    private func text(_ text: String,
-                      language: String?,
-                      style: HighlightStyle) throws -> HighlightResult {
+    private func highlight(_ text: String,
+                           language: String?,
+                           ignoreIllegals: Bool?,
+                           style: HighlightStyle) throws -> HighlightResult {
+        let jsResult = try highlightJS(
+            text: text,
+            language: language,
+            ignoreIllegals: ignoreIllegals
+        )
+        let data = try htmlData(
+            text: jsResult.value,
+            selectors: style.selectorsText
+        )
+        let text = try attributedText(data)
+        let result = HighlightResult(
+            text: text,
+            result: jsResult,
+            background: style.backgroundHex
+        )
+        return result
+    }
+    
+    private func highlightJS(text: String,
+                             language: String?,
+                             ignoreIllegals: Bool?) throws -> HighlightJSResult {
         let hljs = try loadHLJS()
-        let highlightResult: JSValue
+        var highlightArguments: [Any] = [text]
+        var highlightFunction: String = "highlightAuto"
         if let language {
-            highlightResult = hljs.invokeMethod("highlight", withArguments: [text, ["language": language]])
-        } else {
-            highlightResult = hljs.invokeMethod("highlightAuto", withArguments: [text])
+            highlightFunction = "highlight"
+            var highlightOptions: [String: Any] = ["language": language]
+            if let ignoreIllegals {
+                highlightOptions["ignoreIllegals"] = ignoreIllegals
+            }
+            highlightArguments.append(highlightOptions)
+        }
+        let highlightResult = hljs.invokeMethod(highlightFunction, withArguments: highlightArguments)
+        guard let highlightResult else {
+            throw HighlightError.valueNotFound
         }
         let illegal = highlightResult.objectForKeyedSubscript("illegal").toBool()
-        let relevance = Int(highlightResult.objectForKeyedSubscript("relevance").toInt32())
+        let relevance = highlightResult.objectForKeyedSubscript("relevance").toInt32()
         guard
             let value = highlightResult.objectForKeyedSubscript("value").toString(),
             let language = highlightResult.objectForKeyedSubscript("language").toString()
         else {
             throw HighlightError.valueNotFound
         }
-        let data = try data(value, selectors: style.selectorsText)
-        let attributed = try attributed(data)
-#if os(macOS)
-        let attributedText = try AttributedString(attributed, including: \.appKit)
-#else
-        let attributedText = try AttributedString(attributed, including: \.uiKit)
-#endif
-        return HighlightResult(
-            text: attributedText,
+        return HighlightJSResult(
+            value: value,
             illegal: illegal,
             language: language,
-            relevance: relevance,
-            background: style.backgroundHex
+            relevance: relevance
         )
     }
     
@@ -61,9 +85,13 @@ public actor Highlight {
             return hljs
         }
         guard let context = JSContext() else {
-            throw HighlightError.noJSContext
+            throw HighlightError.contextIsNil
         }
-        guard let highlightFilePath = Bundle.module.path(forResource: "highlight.min", ofType: "js") else {
+        let highlightFilePath = Bundle.module.path(
+            forResource: "highlight.min",
+            ofType: "js"
+        )
+        guard let highlightFilePath else {
             throw HighlightError.fileNotFound
         }
         let highlightScript = try String(contentsOfFile: highlightFilePath)
@@ -75,22 +103,21 @@ public actor Highlight {
         return hljs
     }
     
-    private func data(_ value: String, selectors: String) throws -> Data {
-        let data = "<style>"
+    private func htmlData(text: String, selectors: String) throws -> Data {
+        let html = "<style>\n"
             .appending(selectors)
-            .appending("</style>")
-            .appending("<pre><code class=\"hljs\">")
-            .appending(value.trimmingCharacters(in: .whitespacesAndNewlines))
+            .appending("\n</style>")
+            .appending("\n<pre><code class=\"hljs\">")
+            .appending(text.trimmingCharacters(in: .whitespacesAndNewlines))
             .appending("</code></pre>")
-            .data(using: .utf8)
-        guard let data else {
+        guard let data = html.data(using: .utf8) else {
             throw HighlightError.dataEncoding
         }
         return data
     }
     
-    private func attributed(_ data: Data) throws -> NSMutableAttributedString {
-        let nsAttributedString = try NSMutableAttributedString(
+    private func attributedText(_ data: Data) throws -> AttributedString {
+        let mutableString = try NSMutableAttributedString(
             data: data,
             options: [
                 .documentType: NSAttributedString.DocumentType.html,
@@ -98,8 +125,16 @@ public actor Highlight {
             ],
             documentAttributes: nil
         )
-        let range = NSMakeRange(0, nsAttributedString.length)
-        nsAttributedString.removeAttribute(.font, range: range)
-        return nsAttributedString
+        mutableString.removeAttribute(
+            .font,
+            range: NSMakeRange(0, mutableString.length)
+        )
+        let range = NSRange(location: 0, length: mutableString.length - 1)
+        let attributedString = mutableString.attributedSubstring(from: range)
+#if os(macOS)
+        return try AttributedString(attributedString, including: \.appKit)
+#else
+        return try AttributedString(attributedString, including: \.uiKit)
+#endif
     }
 }

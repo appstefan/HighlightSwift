@@ -12,93 +12,88 @@ public struct CodeText: View {
     @State
     var highlightResult: HighlightResult?
     
-    @State
-    var errorText: String?
-    
     let text: String
     let language: String?
     let styleName: HighlightStyle.Name
-    let background: Bool
     let onHighlight: ((HighlightResult) -> Void)?
+    
+    var highlightStyle: HighlightStyle {
+        HighlightStyle(
+            name: styleName,
+            colorScheme: colorScheme
+        )
+    }
 
     /// Creates a text view that displays syntax highlighted code.
     /// - Parameters:
     ///   - text: The plain text code to highlight.
     ///   - language: The language to use (default: automatic).
     ///   - style: The highlight style name to use (default: .xcode).
-    ///   - background: Show the background color of the highlight style (default: false).
     ///   - onHighlight: Callback with the result of each highlight attempt (default: nil).
     public init(_ text: String,
                 language: String? = nil,
                 style styleName: HighlightStyle.Name = .xcode,
-                background: Bool = false,
                 onHighlight: ((HighlightResult) -> Void)? = nil) {
         self.text = text
         self.language = language
         self.styleName = styleName
-        self.background = background
         self.onHighlight = onHighlight
     }
     
     public var body: some View {
-        ZStack {
-            if let highlightResult {
-                Text(highlightResult.text)
-                    .padding(.bottom, -16)
-            } else {
-                Text(text)
+        highlightedText
+            .fontDesign(.monospaced)
+            .task {
+                if
+                    highlightTask == nil,
+                    highlightResult == nil {
+                    await highlightText()
+                }
             }
-        }
-        .fontDesign(.monospaced)
-        .padding(background ? 8 : 0)
-        .background {
-            if
-                background,
-                let highlightResult {
-                Rectangle()
-                    .fill(highlightResult.backgroundColor)
+            .onChange(of: styleName) { newStyleName in
+                highlightText(styleName: newStyleName)
             }
-        }
-        .task {
-            if
-                highlightTask == nil,
-                highlightResult == nil {
-                await highlightText()
+            .onChange(of: colorScheme) { newColorScheme in
+                highlightResult = nil
+                highlightText(colorScheme: newColorScheme)
             }
-        }
-        .onChange(of: styleName) { newStyleName in
-            highlightText(newStyleName: newStyleName)
-        }
-        .onChange(of: colorScheme) { newColorScheme in
-            self.highlightResult = nil
-            highlightText(newColorScheme: newColorScheme)
-        }
     }
     
-    func highlightText(newStyleName: HighlightStyle.Name? = nil,
-                       newColorScheme: ColorScheme? = nil) {
+    private var highlightedText: Text {
+        if let highlightResult {
+            return Text(highlightResult.text)
+        } else {
+            return Text(text)
+        }
+    }
+        
+    private func highlightText(styleName: HighlightStyle.Name? = nil,
+                               colorScheme: ColorScheme? = nil) {
+        let highlightStyle = HighlightStyle(
+            name: styleName ?? self.styleName,
+            colorScheme: colorScheme ?? self.colorScheme
+        )
         highlightTask?.cancel()
-        let styleName = newStyleName ?? styleName
-        let colorScheme = newColorScheme ?? colorScheme
-        let highlightStyle = HighlightStyle(styleName, colorScheme: colorScheme)
-        self.highlightTask = Task {
+        highlightTask = Task {
             await highlightText(highlightStyle)
         }
     }
     
-    func highlightText(_ style: HighlightStyle? = nil) async {
-        let result = try? await Highlight.text(
-            text,
-            language: language,
-            style: style ?? HighlightStyle(styleName, colorScheme: colorScheme)
-        )
-        if let result {
-            await didHighlightText(result)
+    private func highlightText(_ style: HighlightStyle? = nil) async {
+        do {
+            let result = try await Highlight.text(
+                text,
+                language: language,
+                style: style ?? highlightStyle
+            )
+            await handleHighlightResult(result)
+        } catch {
+            print(error)
         }
     }
     
     @MainActor
-    func didHighlightText(_ result: HighlightResult) {
+    private func handleHighlightResult(_ result: HighlightResult) {
         onHighlight?(result)
         if highlightResult == nil {
             highlightResult = result

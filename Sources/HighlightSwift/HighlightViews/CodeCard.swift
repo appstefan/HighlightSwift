@@ -1,6 +1,5 @@
 import SwiftUI
 
-#if os(iOS)
 @available(iOS 16.1, *)
 public struct CodeCard: View {
     @Environment(\.colorScheme)
@@ -46,7 +45,9 @@ public struct CodeCard: View {
                 .onTapGesture(perform: toggleShowButtons)
             HStack {
                 CodeText(text, style: styleName) { highlightResult in
-                    self.highlightResult = highlightResult
+                    withAnimation {
+                        self.highlightResult = highlightResult
+                    }
                 }
                 .font(.system(textStyle))
                 .textSelection(.enabled)
@@ -187,4 +188,3 @@ struct CodeCard_Previews: PreviewProvider {
         }
     }
 }
-#endif

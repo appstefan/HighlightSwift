@@ -3,33 +3,31 @@ import SwiftUI
 public struct HighlightResult: Equatable {
     /// The syntax highlighted attributed text
     public let text: AttributedString
-    /// Indicates that one or more illegal matches were found
+    /// Indicates wether any illegal matches were found
     public let illegal: Bool
-    /// The detected language identifier
+    /// The language identifier
     public let language: String
-    /// The detected language relevance score
+    /// The language relevance score
     public let relevance: Int
-    /// The detected language name
+    /// The language name for display
     public let languageName: String
-    /// The styled background color
+    /// The highlight style background color
     public let backgroundColor: Color
     
     init(text: AttributedString,
-         illegal: Bool,
-         language: String,
-         relevance: Int,
+         result: HighlightJSResult,
          background: String) {
         self.text = text
-        self.illegal = illegal
-        self.language = language
-        self.relevance = relevance
-        self.languageName = HighlightResult.languageName(language, relevance: relevance)
+        self.illegal = result.illegal
+        self.language = result.language
+        self.relevance = Int(result.relevance)
+        self.languageName = HighlightResult.languageName(result)
         self.backgroundColor = HighlightResult.backgroundColor(background)
     }
     
-    private static func languageName(_ language: String, relevance: Int) -> String {
+    private static func languageName(_ result: HighlightJSResult) -> String {
         let name: String
-        switch language {
+        switch result.language {
         case "xml": name = "HTML"
         case "cpp": name = "C++"
         case "csharp": name = "C#"
@@ -40,11 +38,11 @@ public struct HighlightResult: Equatable {
         case "vbnet": name = "Visual Basic .NET"
         case "php-template": name = "PHP Template"
         case "css", "sql", "json", "php", "scss", "toml", "yaml", "wasm":
-            name = language.uppercased()
+            name = result.language.uppercased()
         default:
-            name = language.capitalized
+            name = result.language.capitalized
         }
-        return name + (relevance <= 5 ? "?" : "")
+        return name + (result.relevance <= 5 ? "?" : "")
     }
     
     private static func backgroundColor(_ hex: String) -> Color {
@@ -58,12 +56,9 @@ public struct HighlightResult: Equatable {
         case 8: (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
         default:(a, r, g, b) = (1, 1, 1, 0)
         }
-        return Color(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
+        func rgba(_ value: UInt64) -> Double {
+            Double(value) / 255
+        }
+        return Color(.sRGB, red: rgba(r), green: rgba(g), blue:  rgba(b), opacity: rgba(a))
     }
 }
