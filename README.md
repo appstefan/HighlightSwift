@@ -25,7 +25,6 @@ Convert any `String` of code into a syntax highlighted `AttributedString`
 
 #### `CodeText`
 Drop-in replacement for the SwiftUI `Text` view
-* ⬜️ Clear or style-colored background
 * 🔠 Supports most `Text` modifiers like `.font()`
 * 🌗 Color style syncs automatically with Dark Mode
 
@@ -104,13 +103,13 @@ CodeText(text)
     .font(.system(.callout, weight: .semibold))
 ```
 
-Use the `style:` and `showBackground:` parameters to adjust the appearance:
+Use the `style:` parameter to adjust the appearance:
 ```swift
-CodeText(text, style: .atomOne, showBackground: true)
+CodeText(text, style: .atomOne)
     .font(.body)
 ```
 
-The result callback includes the detected language and other details:
+The result callback includes the detected language, background color and other details:
 ```swift
 CodeText(text) { result in
     let illegal: Bool = result.illegal
