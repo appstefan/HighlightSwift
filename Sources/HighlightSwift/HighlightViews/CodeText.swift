@@ -61,7 +61,7 @@ public struct CodeText: View {
     
     private var highlightedText: Text {
         if let highlightResult {
-            return Text(highlightResult.text)
+            return Text(highlightResult.attributed)
         } else {
             return Text(text)
         }

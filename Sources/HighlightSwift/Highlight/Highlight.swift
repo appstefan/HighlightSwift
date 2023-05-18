@@ -28,20 +28,20 @@ public actor Highlight {
                            language: String?,
                            ignoreIllegals: Bool?,
                            style: HighlightStyle) throws -> HighlightResult {
-        let jsResult = try highlightJS(
+        let hljsResult = try highlightJS(
             text: text,
             language: language,
             ignoreIllegals: ignoreIllegals
         )
         let data = try htmlData(
-            text: jsResult.value,
+            text: hljsResult.value,
             selectors: style.selectorsText
         )
-        let text = try attributedText(data)
+        let attributed = try attributedText(data)
         let result = HighlightResult(
-            text: text,
-            result: jsResult,
-            background: style.backgroundHex
+            attributed: attributed,
+            highlightJSResult: hljsResult,
+            backgroundColorHex: style.backgroundHex
         )
         return result
     }

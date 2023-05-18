@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct HighlightResult: Equatable {
     /// The syntax highlighted attributed text
-    public let text: AttributedString
+    public let attributed: AttributedString
     /// Indicates wether any illegal matches were found
     public let illegal: Bool
     /// The language identifier
@@ -14,15 +14,15 @@ public struct HighlightResult: Equatable {
     /// The highlight style background color
     public let backgroundColor: Color
     
-    init(text: AttributedString,
-         result: HighlightJSResult,
-         background: String) {
-        self.text = text
-        self.illegal = result.illegal
-        self.language = result.language
-        self.relevance = Int(result.relevance)
-        self.languageName = HighlightResult.languageName(result)
-        self.backgroundColor = HighlightResult.backgroundColor(background)
+    init(attributed: AttributedString,
+         highlightJSResult: HighlightJSResult,
+         backgroundColorHex: String) {
+        self.attributed = attributed
+        self.illegal = highlightJSResult.illegal
+        self.language = highlightJSResult.language
+        self.relevance = Int(highlightJSResult.relevance)
+        self.languageName = HighlightResult.languageName(highlightJSResult)
+        self.backgroundColor = HighlightResult.backgroundColor(backgroundColorHex)
     }
     
     private static func languageName(_ result: HighlightJSResult) -> String {
