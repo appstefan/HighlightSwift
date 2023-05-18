@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if os(iOS)
 @available(iOS 16.1, *)
 public struct CodeCard: View {
     @Environment(\.colorScheme)
@@ -164,6 +165,7 @@ public struct CodeCard: View {
 }
 
 @available(iOS 16.1, *)
+@available(tvOS, unavailable)
 struct CodeCard_Previews: PreviewProvider {
     static let code: String = """
     import SwiftUI
@@ -188,3 +190,4 @@ struct CodeCard_Previews: PreviewProvider {
         }
     }
 }
+#endif
