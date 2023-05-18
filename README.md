@@ -45,25 +45,28 @@ Simple iOS card view built with the `CodeText` view
   <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=50% height=50%>
 </picture>
 
-## How to use
+## How to
 ### `Highlight`
 
-Convert a `String` of code into a syntax highlighted `AttributedString`:
+Converting a `String` of code into a syntax highlighted `AttributedString`:
 ```swift
-let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
+let code: String = """
+def num_flat_features(self, x):
+    size = x.size()[1:]
+    num_features = 1
+    for s in size:
+        num_features *= s
+    return num_features
 """
-    
-let result = try await Highlight.code(text)
-let attributedText: AttributedString = result.text
+
+let text: AttributedString = try await Highlight.text(code).attributed
 ```
 
-The result also includes the detected language and other details:
+The full result struct includes the detected language and other details:
 ```swift
+let result: HighlightResult = try await Highlight.text(code)
+
+let text: AttributedString = result.attributed
 let illegal: Bool = result.illegal
 let language: String = result.language
 let relevance: Int32 = result.relevance
@@ -71,47 +74,50 @@ let languageName: String = result.languageName
 let backgroundColor: Color = result.backgroundColor
 ```
 
-Use the `language:` parameter to skip automatic detection:
+The `language:` parameter sets the language and prevents automatic detection:
 ```swift
-let highlightResult = try await Highlight.code(text, language: "swift")
+let highlightResult = try await Highlight.text(code, language: "swift")
 ```
 
-Use the `style:` parameter to set the highlight style and color scheme:
+The `style:` parameter changes the highlight style and color scheme:
 ```swift
-let highlightResult = try await Highlight.code(text, style: .dark(.solarFlare))
+let highlightResult = try await Highlight.text(code, style: .dark(.solarFlare))
 ```
+
 ##
 ### `CodeText`
-Create a `CodeText` view with a `String` of code:
+
+Creating a `CodeText` view with a `String` of code:
 ```swift
-let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
+let code: String = """
+def num_flat_features(self, x):
+    size = x.size()[1:]
+    num_features = 1
+    for s in size:
+        num_features *= s
+    return num_features
 """
 
 var body: some View {
-    CodeText(text)
+    CodeText(code)
 }
 ```
 
-Most `Text` modifiers like `.font()` work as normal, just the font design and width cannot be changed:
+The attributed code string takes presedence over the font design, width and foreground color. Other `Text` modifiers like `.font()` can be used:
 ```swift
-CodeText(text)
+CodeText(code)
     .font(.system(.callout, weight: .semibold))
 ```
 
-Use the `style:` parameter to adjust the appearance:
+The `style:` parameter sets one of the 30 color styles. 
+They each have a dark variant that the `CodeText` view automatically uses in Dark Mode.
 ```swift
-CodeText(text, style: .atomOne)
-    .font(.body)
+CodeText(code, style: .github)
 ```
 
 The result callback includes the detected language, background color and other details:
 ```swift
-CodeText(text) { result in
+CodeText(code) { result in
     let illegal: Bool = result.illegal
     let language: String = result.language
     let relevance: Int32 = result.relevance
@@ -124,24 +130,25 @@ CodeText(text) { result in
 ##
 ### `CodeCard`
 
-Create a `CodeCard` with a `String` of code:
+Creating a `CodeCard` view with a `String` of code:
 ```swift
-let text: String = """
-def factorial(n):
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n - 1)
+let code: String = """
+def num_flat_features(self, x):
+    size = x.size()[1:]
+    num_features = 1
+    for s in size:
+        num_features *= s
+    return num_features
 """
 
 var body: some View {
-    CodeCard(text)
+    CodeCard(code)
 }
 ```
 
-Use the `style:` and `textStyle:` parameters to adjust the initial appearance:
+The `style:` and `textStyle:` parameters can set the initially selected options:
 ```swift
-CodeCard(text, style: .paraiso, textStyle: .caption)
+CodeCard(code, style: .paraiso, textStyle: .caption)
 ```
 
 ## Installation
