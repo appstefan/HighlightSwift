@@ -5,18 +5,18 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fappstefan%2FHighlightSwift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/appstefan/HighlightSwift)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fappstefan%2FHighlightSwift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/appstefan/HighlightSwift)
 
-Syntax Highlighting in Swift and SwiftUI
+Code Syntax Highlighting in Swift and SwiftUI
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/892a5be0-146e-4cb8-90ca-559c2c67452c">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c8b3f63f-4831-4117-b302-37623e44be99">
-  <img alt="CodeCardDemo" src="https://github.com/appstefan/HighlightSwift/assets/6455394/c8b3f63f-4831-4117-b302-37623e44be99" width=50% height=50%>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b95f08cd-613a-42c1-8fae-3ab62e477ebe">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/fd9c69df-1efa-47ec-a753-599346cd1ca2">
+  <img alt="CodeCardDemo" src="https://github.com/appstefan/HighlightSwift/assets/6455394/fd9c69df-1efa-47ec-a753-599346cd1ca2" width=325>
 </picture>
 
 ## Contents
 
 #### `Highlight`
-Convert any `String` of code into a syntax highlighted `AttributedString`
+Converts a `String` of code into a syntax highlighted `AttributedString`
 * 🔍 Automatic language detection
 * 📚 Works for 50 common languages
 * 🌈 Choose from 30 classic color styles
@@ -26,23 +26,23 @@ Convert any `String` of code into a syntax highlighted `AttributedString`
 #### `CodeText`
 Drop-in replacement for the SwiftUI `Text` view
 * 🔠 Supports most `Text` modifiers like `.font()`
-* 🌗 Color style syncs automatically with Dark Mode
+* 🌗 Color styles sync automatically with Dark Mode
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=50% height=50%>
+  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=325>
 </picture>
 
 #### `CodeCard`
-Simple iOS card view built with the `CodeText` view
+Card view for iOS built with the `CodeText` view
 * 💬 Displays the detected language
 * 👆 Tap for style controls, double tap to reset
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
   <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=50% height=50%>
+  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=325>
 </picture>
 
 ## How to
