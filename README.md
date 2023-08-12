@@ -6,149 +6,116 @@
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fappstefan%2FHighlightSwift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/appstefan/HighlightSwift)
 
 Code Syntax Highlighting in Swift and SwiftUI
+Forked from [appstefan/HighlightSwift](https://github.com/appstefan/HighlightSwift)
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/b95f08cd-613a-42c1-8fae-3ab62e477ebe">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/fd9c69df-1efa-47ec-a753-599346cd1ca2">
-  <img alt="CodeCardDemo" src="https://github.com/appstefan/HighlightSwift/assets/6455394/fd9c69df-1efa-47ec-a753-599346cd1ca2" width=325>
+  <source media="(prefers-color-scheme: light)" srcset="/Resources/codetext-light-appearance@2x.png">
+  <source media="(prefers-color-scheme: dark)" srcset="/Resources/codetext-dark-appearance@2x.png">
+  <img alt="CodeTextDemo" src="/Resources/codetext-light-appearance@2x.png" width=325>
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="/Resources/codecard-light-appearance@2x.png">
+  <source media="(prefers-color-scheme: dark)" srcset="/Resources/codecard-dark-appearance@2x.png">
+  <img alt="CodeCardDemo" src="/Resources/codecard-light-appearance@2x.png" width=325>
 </picture>
 
 ## Contents
 
-#### `Highlight`
-Converts a `String` of code into a syntax highlighted `AttributedString`
-* 🔍 Automatic language detection
-* 📚 Works for 50 common languages
-* 🌈 Choose from 30 classic color styles
-* 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
-* 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
-
-#### `CodeText`
-Drop-in replacement for the SwiftUI `Text` view
-* 🔠 Supports most `Text` modifiers like `.font()`
-* 🌗 Color styles sync automatically with Dark Mode
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052">
-  <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=325>
-</picture>
-
-#### `CodeCard`
-Card view for iOS built with the `CodeText` view
-* 💬 Displays the detected language
-* 👆 Tap for style controls, double tap to reset
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/c785af2a-f6e4-4589-ae4d-34c4feaa8644">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276">
-  <img alt="CodeCard" src="https://github.com/appstefan/HighlightSwift/assets/6455394/70dc2a01-1cf1-4378-9c88-49247e92e276" width=325>
-</picture>
-
-## How to
 ### `Highlight`
 
-Converting a `String` of code into a syntax highlighted `AttributedString`:
-```swift
-let code: String = """
-def num_flat_features(self, x):
-    size = x.size()[1:]
-    num_features = 1
-    for s in size:
-        num_features *= s
-    return num_features
-"""
+Converts a `String` of code into a syntax highlighted `AttributedString`
 
-let text: AttributedString = try await Highlight.text(code).attributed
-```
+- ⛓️ Select a language style statically
+- 📚 Works for 40 common languages(The original works 50 common languages)
+- 🌈 Supports Only Xcode styles(The original provides 30 classic color styles)
+- 🧰 Built with [highlightjs/highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
+- 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
 
-The full result struct includes the detected language and other details:
-```swift
-let result: HighlightResult = try await Highlight.text(code)
+### `CodeText`
 
-let text: AttributedString = result.attributed
-let illegal: Bool = result.illegal
-let language: String = result.language
-let relevance: Int32 = result.relevance
-let languageName: String = result.languageName
-let backgroundColor: Color = result.backgroundColor
-```
+Drop-in replacement for the SwiftUI `Text` view
 
-The `language:` parameter sets the language and prevents automatic detection:
-```swift
-let highlightResult = try await Highlight.text(code, language: "swift")
-```
+- 🔠 Supports most `Text` modifiers like `.font()`
+- 🌗 Color styles sync automatically with Dark Mode
 
-The `style:` parameter changes the highlight style and color scheme:
-```swift
-let highlightResult = try await Highlight.text(code, style: .dark(.solarFlare))
-```
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="/Resources/codetext-light-appearance@2x.png">
+  <source media="(prefers-color-scheme: dark)" srcset="/Resources/codetext-dark-appearance@2x.png">
+  <img alt="CodeText" src="/Resources/codetext-light-appearance@2x.png" width=325>
+</picture>
 
-##
+### `CodeCard`
+
+Card view for iOS built with the `CodeText` view
+
+- 💬 Displays the configured language
+- 👆 Double tap to reset
+
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="/Resources/codecard-light-appearance@2x.png">
+  <source media="(prefers-color-scheme: dark)" srcset="/Resources/codecard-dark-appearance@2x.png">
+  <img alt="CodeCard" src="/Resources/codecard-light-appearance@2x.png" width=325>
+</picture>
+
+## Usage
+
 ### `CodeText`
 
 Creating a `CodeText` view with a `String` of code:
+
 ```swift
-let code: String = """
-def num_flat_features(self, x):
-    size = x.size()[1:]
-    num_features = 1
-    for s in size:
-        num_features *= s
-    return num_features
-"""
+let code: String = 
+  """
+  struct Person {
+    let gender: Gender
+    let blood: Blood
+    let Family: Family
+  }
+  """
 
 var body: some View {
-    CodeText(code)
+  CodeText(code)
 }
 ```
 
 The attributed code string takes presedence over the font design, width and foreground color. Other `Text` modifiers like `.font()` can be used:
+
 ```swift
 CodeText(code)
-    .font(.system(.callout, weight: .semibold))
+  .font(.system(.callout, weight: .semibold))
 ```
 
-The `style:` parameter sets one of the 30 color styles. 
+The `language:` and `colorScheme:` parameters set the highlited style depending on the language and its `ColorScheme` in SwiftUI. 
 They each have a dark variant that the `CodeText` view automatically uses in Dark Mode.
+
 ```swift
-CodeText(code, style: .github)
+CodeText(code, language: .swift, colorScheme: .dark)
 ```
 
-The result callback includes the detected language, background color and other details:
+The result callback includes your codes with associated attributes and its background color:
+
 ```swift
-CodeText(code) { result in
-    let illegal: Bool = result.illegal
-    let language: String = result.language
-    let relevance: Int32 = result.relevance
-    let languageName: String = result.languageName
-    let attributedText: AttributedString = result.text
-    let backgroundColor: Color = result.backgroundColor
+CodeText(code, language: .swift) { result in
+  let attributedText: AttributedString = result.text
+  let backgroundColor: Color = result.backgroundColor
 }
 ```
 
-##
 ### `CodeCard`
 
 Creating a `CodeCard` view with a `String` of code:
-```swift
-let code: String = """
-def num_flat_features(self, x):
-    size = x.size()[1:]
-    num_features = 1
-    for s in size:
-        num_features *= s
-    return num_features
-"""
 
+```swift
 var body: some View {
-    CodeCard(code)
+  CodeCard(code)
 }
 ```
 
-The `style:` and `textStyle:` parameters can set the initially selected options:
+The `language:` and `textStyle:` parameters can set the initially selected options:
+
 ```swift
-CodeCard(code, style: .paraiso, textStyle: .caption)
+CodeCard(code, language: .swift, textStyle: .caption)
 ```
 
 ## Installation
@@ -156,26 +123,22 @@ CodeCard(code, style: .paraiso, textStyle: .caption)
 ### Project
 
 1. In Xcode, go to `File` > `Add packages...`
-2. Enter `https://github.com/appstefan/highlightswift` in the field and click `Add Package`
+2. Enter `https://github.com/b150005/highlightswift` in the field and click `Add Package`
 
 ### Package
 
 In `Package.swift` add this repository as a dependency:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/appstefan/highlightswift.git", from: "1.0.0")
+  .package(url: "https://github.com/b150005/highlightswift.git", from: "1.0.0")
 ],
 targets: [
-    .target(
-        name: "YourPackageName",
-        dependencies: ["HighlightSwift"]
-    )
+  .target(
+    name: "YourPackageName",
+    dependencies: ["HighlightSwift"]
+  )
 ]
 ```
-
-## Author
-
-Stefan, thrower_ranges.0d@icloud.com
 
 ## License
 
