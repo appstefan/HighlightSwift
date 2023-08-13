@@ -3,32 +3,26 @@ import SwiftUI
 #if os(iOS)
 @available(iOS 16.1, *)
 public struct CodeCard: View {
-  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.colorScheme) private var colorScheme: ColorScheme
   
-  @State var textStyle: Font.TextStyle
-  @State var showStyleControls: Bool = false
+  @State var showsLanguage: Bool = true
   @State var highlightResult: HighlightResult?
   
   let text: String
   let language: HighlightStyle.Language
-  let initialColorScheme: ColorScheme?
-  let initialTextStyle: Font.TextStyle
+  let textStyle: Font.TextStyle
   
   /// Creates a card view that displays syntax highlighted code.
   /// - Parameters:
   ///   - text: The plain text code to highlight.
-  ///   - language: The initial language style (default: .swift).
-  ///   - style: The initial highlight color style (default: .xcode).
-  ///   - textStyle: The initial font text style (default: .caption2).
+  ///   - language: The language style with syntax highlight (default: .swift).
+  ///   - textStyle: The text style to display fonts (default: .footnote).
   public init(_ text: String,
               language: HighlightStyle.Language = .swift,
-              initialColorScheme: ColorScheme? = nil,
-              textStyle: Font.TextStyle = .caption2) {
+              textStyle: Font.TextStyle = .footnote) {
     self.text = text
     self.language = language
-    self.initialColorScheme = initialColorScheme
-    self.initialTextStyle = textStyle
-    self._textStyle = State(initialValue: textStyle)
+    self.textStyle = textStyle
   }
   
   public var body: some View {
@@ -36,31 +30,24 @@ public struct CodeCard: View {
       Color
         .clear
         .contentShape(Rectangle())
-        .onTapGesture(count: 2, perform: resetStyle)
-        .onTapGesture(perform: toggleShowButtons)
+        .onTapGesture(perform: toggleShowLanguage)
       HStack {
-        CodeText(
-          text,
-          language: language,
-          colorScheme: initialColorScheme ?? colorScheme) { highlightResult in
+        CodeText(text, language: language, textStyle: textStyle) { highlightResult in
           withAnimation {
             self.highlightResult = highlightResult
           }
         }
-        .font(.system(textStyle))
         .textSelection(.enabled)
         Spacer()
       }
       .contentShape(Rectangle())
-      .onTapGesture(count: 2, perform: resetStyle)
-      .onTapGesture(perform: toggleShowButtons)
-      VStack(alignment: .trailing) {
-        if showStyleControls {
-          styleControls
-        }
-        Spacer(minLength: 12)
-        if let highlightResult {
-          languageName(highlightResult)
+      .onTapGesture(perform: toggleShowLanguage)
+      if showsLanguage {
+        VStack(alignment: .trailing) {
+          Spacer(minLength: 12)
+          if let highlightResult {
+            languageName(highlightResult)
+          }
         }
       }
     }
@@ -82,56 +69,13 @@ public struct CodeCard: View {
   
   // MARK: - Actions
   
-  func resetStyle() {
+  func toggleShowLanguage() {
     withAnimation {
-      showStyleControls = false
-      textStyle = initialTextStyle
-    }
-  }
-  
-  func toggleShowButtons() {
-    withAnimation {
-      showStyleControls.toggle()
-    }
-  }
-  
-  func toggleFontTextStyle() {
-    withAnimation {
-      switch textStyle {
-        case .body:
-          textStyle = .caption2
-        case .callout:
-          textStyle = .body
-        case .footnote:
-          textStyle = .callout
-        case .caption:
-          textStyle = .footnote
-        case .caption2:
-          textStyle = .caption
-        default:
-          textStyle = .caption2
-      }
+      showsLanguage.toggle()
     }
   }
   
   // MARK: - Views
-  
-  var styleControls: some View {
-    Button(action: toggleFontTextStyle) {
-      systemImage("textformat.size")
-    }
-  }
-  
-  func systemImage(_ systemName: String) -> some View {
-    Text("\(Image(systemName: systemName))")
-      .font(.callout)
-      .foregroundColor(.secondary)
-      .frame(width: 34, height: 34)
-      .background {
-        Circle()
-          .fill(.ultraThinMaterial)
-      }
-  }
   
   func languageName(_ result: HighlightResult) -> some View {
     Text(language.rawValue)
@@ -164,7 +108,7 @@ struct CodeCard_Previews: PreviewProvider {
   
   static var previews: some View {
     ScrollView {
-      CodeCard(code, language: .swift)
+      CodeCard(code, language: .swift, textStyle: .caption2)
         .padding()
     }
   }

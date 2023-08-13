@@ -3,43 +3,39 @@ import SwiftUI
 @available(iOS 16.1, *)
 @available(tvOS 16.1, *)
 public struct CodeText: View {
-  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.colorScheme) private var colorScheme: ColorScheme
   
   @State var highlightTask: Task<Void, Never>?
   @State var highlightResult: HighlightResult?
   
   let text: String
   let language: HighlightStyle.Language
-  let initialColorScheme: ColorScheme?
+  let textStyle: Font.TextStyle
   let onHighlight: ((HighlightResult) -> Void)?
   
   /// Creates a text view that displays syntax highlighted code.
   /// - Parameters:
   ///   - text: The plain text code to highlight.
-  ///   - language: The language to use (default: automatic).
-  ///   - colorScheme: The highlight style described by ColorScheme (default: nil).
+  ///   - language: The language style with syntax highlight (default: .swift).
+  ///   - textStyle: The text style to display fonts (default: .footnote)
   ///   - onHighlight: Callback with the result of each highlight attempt (default: nil).
   public init(_ text: String,
               language: HighlightStyle.Language = .swift,
-              colorScheme: ColorScheme? = nil,
+              textStyle: Font.TextStyle = .footnote,
               onHighlight: ((HighlightResult) -> Void)? = nil) {
     self.text = text
     self.language = language
-    self.initialColorScheme = colorScheme
+    self.textStyle = textStyle
     self.onHighlight = onHighlight
   }
   
   public var body: some View {
     highlightedText
       .fontDesign(.monospaced)
+      .font(.system(textStyle))
       .task {
         if highlightTask == nil, highlightResult == nil {
-          if let initialColorScheme {
-            await highlightText(HighlightStyle(colorScheme: initialColorScheme))
-          }
-          else {
-            await highlightText(HighlightStyle(colorScheme: colorScheme))
-          }
+          await highlightText(HighlightStyle(colorScheme: colorScheme))
         }
       }
       .onChange(of: colorScheme) { newColorScheme in
@@ -97,21 +93,22 @@ struct CodeText_Previews: PreviewProvider {
     import SwiftUI
     
     struct SwiftUIView: View {
-        var body: some View {
-            Text("Hello World!")
-        }
+      var body: some View {
+        Text("Hello World!")
+      }
     }
     
     struct SwiftUIView_Previews: PreviewProvider {
-        static var previews: some View {
-            SwiftUIView()
-        }
+      static var previews: some View {
+        SwiftUIView()
+      }
     }
     """
   
   static var previews: some View {
-    CodeText(code)
-      .padding()
-      .font(.caption2)
+    CodeText(code) { result in
+      let attributedText: AttributedString = result.attributed
+      let backgroundColor: Color = result.backgroundColor
+    }
   }
 }

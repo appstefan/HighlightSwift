@@ -26,7 +26,7 @@ Forked from [appstefan/HighlightSwift](https://github.com/appstefan/HighlightSwi
 
 Converts a `String` of code into a syntax highlighted `AttributedString`
 
-- ⛓️ Select a language style statically
+- ⛓️ Select a language style of syntax highlight statically
 - 📚 Works for 40 common languages(The original works 50 common languages)
 - 🌈 Supports Only Xcode styles(The original provides 30 classic color styles)
 - 🧰 Built with [highlightjs/highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
@@ -50,7 +50,7 @@ Drop-in replacement for the SwiftUI `Text` view
 Card view for iOS built with the `CodeText` view
 
 - 💬 Displays the configured language
-- 👆 Double tap to reset
+- 👆 Double tap to toggle its display
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="/Resources/codecard-light-appearance@2x.png">
@@ -67,10 +67,18 @@ Creating a `CodeText` view with a `String` of code:
 ```swift
 let code: String = 
   """
-  struct Person {
-    let gender: Gender
-    let blood: Blood
-    let Family: Family
+  import SwiftUI
+    
+  struct SwiftUIView: View {
+    var body: some View {
+      Text("Hello World!")
+    }
+  }
+    
+  struct SwiftUIView_Previews: PreviewProvider {
+    static var previews: some View {
+      SwiftUIView()
+    }
   }
   """
 
@@ -79,25 +87,21 @@ var body: some View {
 }
 ```
 
-The attributed code string takes presedence over the font design, width and foreground color. Other `Text` modifiers like `.font()` can be used:
+The `language:` and `textStyle:` parameters set the syntax highlight style depending on your designating language and its font size.
 
 ```swift
-CodeText(code)
-  .font(.system(.callout, weight: .semibold))
+CodeText(code, language: .swift, textStyle: .body)
 ```
 
-The `language:` and `colorScheme:` parameters set the highlited style depending on the language and its `ColorScheme` in SwiftUI. 
-They each have a dark variant that the `CodeText` view automatically uses in Dark Mode.
-
-```swift
-CodeText(code, language: .swift, colorScheme: .dark)
-```
+<picture>
+  <img alt="CodeTextWithLanguageAndTextStyle" src="/Resources/codetext-language-textstyle@2x.png" width=325>
+</picture>
 
 The result callback includes your codes with associated attributes and its background color:
 
 ```swift
 CodeText(code, language: .swift) { result in
-  let attributedText: AttributedString = result.text
+  let attributedText: AttributedString = result.attributed
   let backgroundColor: Color = result.backgroundColor
 }
 ```
@@ -112,11 +116,27 @@ var body: some View {
 }
 ```
 
-The `language:` and `textStyle:` parameters can set the initially selected options:
+The `language:` and `textStyle:` parameters set its text style as well as `CordText` does:
 
 ```swift
+let code: String =
+  """
+  @main
+  struct SwiftUILibrary: App {
+    var body: some Scene {
+      WindowGroup {
+        Text("Hello, world!")
+      }
+    }
+  }
+  """
+
 CodeCard(code, language: .swift, textStyle: .caption)
 ```
+
+<picture>
+  <img alt="CodeCardWithLanguageAndTextStyle" src="/Resources/codecard-language-textstyle@2x.png" width=325>
+</picture>
 
 ## Installation
 
