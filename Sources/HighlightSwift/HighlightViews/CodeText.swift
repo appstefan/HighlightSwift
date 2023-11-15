@@ -1,132 +1,167 @@
 import SwiftUI
 
-@available(iOS 16.1, *)
-@available(tvOS 16.1, *)
-public struct CodeText: View {
+@available(iOS 16.1, tvOS 16.1, *)
+public struct CodeText {
+    //  MARK: - Properties
+    
     @Environment(\.colorScheme)
     var colorScheme
     
-    @State
-    var highlightTask: Task<Void, Never>?
+    @Environment(\.highlight) 
+    var highlight
+    
+    @Binding 
+    var result: HighlightResult?
     
     @State
-    var highlightResult: HighlightResult?
+    var task: Task<Void, Never>?
     
-    let text: String
-    let language: String?
-    let styleName: HighlightStyle.Name
-    let onHighlight: ((HighlightResult) -> Void)?
+    @State
+    var attributedText: AttributedString?
     
-    var highlightStyle: HighlightStyle {
-        HighlightStyle(
-            name: styleName,
-            colorScheme: colorScheme
-        )
-    }
-
+    private let text: String
+    private var mode: HighlightMode = .automatic
+    private var theme: HighlightTheme = .xcode
+    
+    //  MARK: - Initializer
+    
     /// Creates a text view that displays syntax highlighted code.
     /// - Parameters:
-    ///   - text: The plain text code to highlight.
-    ///   - language: The language to use (default: automatic).
-    ///   - style: The highlight style name to use (default: .xcode).
-    ///   - onHighlight: Callback with the result of each highlight attempt (default: nil).
-    public init(_ text: String,
-                language: String? = nil,
-                style styleName: HighlightStyle.Name = .xcode,
-                onHighlight: ((HighlightResult) -> Void)? = nil) {
+    ///   - text: Some plain text code to highlight and display.
+    ///   - result: A binding to the highlight result (default: nil).
+    public init(_ text: String, result: Binding<HighlightResult?> = .constant(nil)) {
         self.text = text
-        self.language = language
-        self.styleName = styleName
-        self.onHighlight = onHighlight
+        self._result = result
     }
     
-    public var body: some View {
-        highlightedText
-            .fontDesign(.monospaced)
-            .task {
-                if
-                    highlightTask == nil,
-                    highlightResult == nil {
-                    await highlightText()
+    //  MARK: - Modifiers
+    
+    /// Sets the language detection mode for this code text.
+    /// See also: `codeTextLanguage(_:)` to directly apply `.language` mode.
+    public func codeTextMode(_ mode: HighlightMode) -> CodeText {
+        var content = self
+        content.mode = mode
+        return content
+    }
+    
+    /// Sets the highlight color theme for this code text.
+    public func codeTextTheme(_ theme: HighlightTheme) -> CodeText {
+        var content = self
+        content.theme = theme
+        return content
+    }
+    
+    /// Sets the a specific language for this code text.
+    /// Disables automatic language detection mode.
+    public func codeTextLanguage(_ language: HighlightLanguage) -> CodeText {
+        var content = self
+        content.mode = .language(language)
+        return content
+    }
+    
+    //  MARK: - Functions
+
+    private nonisolated func highlightText(
+        mode: HighlightMode? = nil,
+        theme: HighlightTheme? = nil,
+        colorScheme: ColorScheme? = nil
+    ) async {
+        let mode = mode ?? self.mode
+        let theme = theme ?? self.theme
+        let scheme = colorScheme ?? self.colorScheme
+        let colors = HighlightColors(theme: theme, colorScheme: scheme)
+        do {
+            let result = try await highlight.request(
+                text,
+                mode: mode,
+                colors: colors
+            )
+            guard !Task.isCancelled else {
+                return
+            }
+            await MainActor.run {
+                self.result = result
+                print(result)
+                withAnimation {
+                    self.attributedText = result.attributedText
                 }
             }
-            .onChange(of: styleName) { newStyleName in
-                highlightText(styleName: newStyleName)
-            }
-            .onChange(of: colorScheme) { newColorScheme in
-                highlightResult = nil
-                highlightText(colorScheme: newColorScheme)
-            }
-    }
-    
-    private var highlightedText: Text {
-        if let highlightResult {
-            return Text(highlightResult.attributed)
-        } else {
-            return Text(text)
-        }
-    }
-        
-    private func highlightText(styleName: HighlightStyle.Name? = nil,
-                               colorScheme: ColorScheme? = nil) {
-        let highlightStyle = HighlightStyle(
-            name: styleName ?? self.styleName,
-            colorScheme: colorScheme ?? self.colorScheme
-        )
-        highlightTask?.cancel()
-        highlightTask = Task {
-            await highlightText(highlightStyle)
-        }
-    }
-    
-    private func highlightText(_ style: HighlightStyle? = nil) async {
-        do {
-            let result = try await Highlight.text(
-                text,
-                language: language,
-                style: style ?? highlightStyle
-            )
-            await handleHighlightResult(result)
         } catch {
-            print(error)
-        }
-    }
-    
-    @MainActor
-    private func handleHighlightResult(_ result: HighlightResult) {
-        onHighlight?(result)
-        if highlightResult == nil {
-            highlightResult = result
-        } else {
-            withAnimation {
-                highlightResult = result
-            }
+            return
         }
     }
 }
 
-@available(iOS 16.1, *)
-@available(tvOS 16.1, *)
-struct CodeText_Previews: PreviewProvider {
-    static let code: String = """
-    import SwiftUI
+//  MARK: - View
 
+@available(iOS 16.1, tvOS 16.1, *)
+extension CodeText: View {
+    public var body: some View {
+        Text(attributedText ?? AttributedString(stringLiteral: text))
+            .fontDesign(.monospaced)
+            .task {
+                guard attributedText == nil else {
+                    return
+                }
+                await highlightText()
+            }
+            .onChange(of: mode) { newMode in
+                task?.cancel()
+                task = Task {
+                    await highlightText(mode: newMode)
+                }
+            }
+            .onChange(of: theme) { newTheme in
+                task?.cancel()
+                task = Task {
+                    await highlightText(theme: newTheme)
+                }
+            }
+            .onChange(of: colorScheme) { newColorScheme in
+                task?.cancel()
+                task = Task {
+                    await highlightText(colorScheme: newColorScheme)
+                }
+            }
+    }
+}
+
+//  MARK: - Preview
+
+@available(iOS 16.1, tvOS 16.1, *)
+private struct PreviewCodeText: View {
+    @State var fontToggle: Bool = false
+    @State var theme: HighlightTheme = .xcode
+    
+    let code: String = """
+    import SwiftUI
+    
     struct SwiftUIView: View {
         var body: some View {
             Text("Hello World!")
         }
     }
+    """
 
-    struct SwiftUIView_Previews: PreviewProvider {
-        static var previews: some View {
-            SwiftUIView()
+    var body: some View {
+        List {
+            CodeText(code)
+                .codeTextTheme(theme)
+                .codeTextLanguage(.swift)
+                .font(fontToggle ? .caption2 : .subheadline)
+            Button {
+                withAnimation {
+                    fontToggle = !fontToggle
+                    theme = fontToggle ? .solarFlare : .xcode
+                }
+            } label: {
+                Text("Change style")
+            }
         }
     }
-    """
-    
-    static var previews: some View {
-        CodeText(code)
-            .padding()
-            .font(.caption2)
-    }
+}
+
+@available(iOS 16.1, tvOS 16.1, *)
+#Preview {
+    PreviewCodeText()
 }
