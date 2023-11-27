@@ -81,7 +81,6 @@ public struct CodeText {
             }
             await MainActor.run {
                 self.result = result
-                print(result)
                 withAnimation {
                     self.attributedText = result.attributedText
                 }
