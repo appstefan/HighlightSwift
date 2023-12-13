@@ -1,5 +1,5 @@
 struct HighlightCSS {
-    static func light(_ theme: HighlightTheme) -> StaticString {
+    static func light(_ theme: HighlightTheme) -> String {
         switch theme {
         case .a11y:
             /*
@@ -227,7 +227,7 @@ struct HighlightCSS {
         }
     }
     
-    static func dark(_ theme: HighlightTheme) -> StaticString {
+    static func dark(_ theme: HighlightTheme) -> String {
         switch theme {
         case .a11y:
             /*

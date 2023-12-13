@@ -88,13 +88,13 @@ public actor Highlight {
         if isUndefined {
             attributedText = AttributedString(stringLiteral: text)
         } else {
-            let data = try htmlDataFromText(hljsResult.value, selectors: colors.selectorsText)
+            let data = try htmlDataFromText(hljsResult.value, selectors: colors.css)
             attributedText = try attributedTextFromData(data)
         }
         return HighlightResult(
             attributedText: attributedText,
             highlightJSResult: hljsResult,
-            backgroundColorHex: colors.backgroundHex
+            backgroundColorHex: colors.background
         )
     }
 

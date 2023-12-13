@@ -32,6 +32,26 @@ final class HighlightSwiftTests: XCTestCase {
         XCTAssertEqual(attributedText.characters.count, 318)
     }
     
+    func testCustomColors() async throws {
+        let customCSS: String = """
+        .hljs { display: block; overflow-x: auto; padding: 0.5em; }
+        .hljs, 
+        .hljs-subst { color: black; }
+        .hljs-string,
+        .hljs-section,
+        .hljs-selector-class,
+        .hljs-template-variable,
+        .hljs-deletion { color: #800; }
+        """
+        let colors = HighlightColors(css: customCSS, background: "")
+        let result = try await highlight.request(swiftCode, colors: colors)
+        XCTAssertFalse(result.isUndefined)
+        XCTAssertEqual(result.relevance, 20)
+        XCTAssertEqual(result.language, "swift")
+        XCTAssertEqual(result.languageName, "Swift")
+        XCTAssertEqual(result.attributedText.characters.count, 318)
+    }
+    
     func testAutomaticLanguage() async throws {
         let result = try await highlight.request(swiftCode)
         XCTAssertFalse(result.isUndefined)

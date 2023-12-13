@@ -58,7 +58,9 @@ The `language:` parameter sets a specific language, disabling automatic detectio
 let attributedText = try await highlight.attributed(code, language: "swift")
 ```
 
-The `colors:` parameter sets the highlight theme and the system color scheme:
+The `colors:` parameter sets the highlight theme and the system color scheme.
+Alternatively, a custom CSS color theme can be provided using the `.custom` option.
+Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
 ```swift
 let attributedText = try await highlight.attributed(code, colors: .dark(.solarFlare))
 ```
@@ -92,11 +94,13 @@ CodeText("print(\"Hello World\")")
     .font(.system(.callout, weight: .semibold))
 ```
 
-The `.codeTextTheme(_:)` modifier sets one of the 30 built-in color themes.
-Each theme has a dark color scheme variant that is used automatically in Dark Mode:
+The `.codeTextColors(_:)` modifier sets one of the 30 built-in color themes.
+Each theme has a dark color scheme variant that is used automatically in Dark Mode.
+Alternatively, custom CSS for both light and dark modes can be provided using the `.custom` color option.
+Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
 ```swift
 CodeText("print(\"Hello World\")")
-    .codeTextTheme(.github)
+    .codeTextColors(.github)
 ```
 
 The `.codeTextLanguage(_:)` modifier sets a specific language, disabling automatic detection:

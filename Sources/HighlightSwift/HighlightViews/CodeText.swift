@@ -21,7 +21,7 @@ public struct CodeText {
     
     private let text: String
     private var mode: HighlightMode = .automatic
-    private var theme: HighlightTheme = .xcode
+    private var colors: CodeTextColors = .theme(.xcode)
     
     //  MARK: - Initializer
     
@@ -45,9 +45,9 @@ public struct CodeText {
     }
     
     /// Sets the highlight color theme for this code text.
-    public func codeTextTheme(_ theme: HighlightTheme) -> CodeText {
+    public func codeTextColors(_ colors: CodeTextColors) -> CodeText {
         var content = self
-        content.theme = theme
+        content.colors = colors
         return content
     }
     
@@ -63,18 +63,18 @@ public struct CodeText {
 
     private nonisolated func highlightText(
         mode: HighlightMode? = nil,
-        theme: HighlightTheme? = nil,
+        colors: CodeTextColors? = nil,
         colorScheme: ColorScheme? = nil
     ) async {
         let mode = mode ?? self.mode
-        let theme = theme ?? self.theme
+        let colors = colors ?? self.colors
         let scheme = colorScheme ?? self.colorScheme
-        let colors = HighlightColors(theme: theme, colorScheme: scheme)
+        let schemeColors = scheme == .dark ? colors.dark : colors.light
         do {
             let result = try await highlight.request(
                 text,
                 mode: mode,
-                colors: colors
+                colors: schemeColors
             )
             guard !Task.isCancelled else {
                 return
@@ -110,10 +110,10 @@ extension CodeText: View {
                     await highlightText(mode: newMode)
                 }
             }
-            .onChange(of: theme) { newTheme in
+            .onChange(of: colors) { newColors in
                 task?.cancel()
                 task = Task {
-                    await highlightText(theme: newTheme)
+                    await highlightText(colors: newColors)
                 }
             }
             .onChange(of: colorScheme) { newColorScheme in
@@ -130,7 +130,7 @@ extension CodeText: View {
 @available(iOS 16.1, tvOS 16.1, *)
 private struct PreviewCodeText: View {
     @State var fontToggle: Bool = false
-    @State var theme: HighlightTheme = .xcode
+    @State var colors: CodeTextColors = .theme(.xcode)
     
     let code: String = """
     import SwiftUI
@@ -141,17 +141,17 @@ private struct PreviewCodeText: View {
         }
     }
     """
-
+    
     var body: some View {
         List {
             CodeText(code)
-                .codeTextTheme(theme)
+                .codeTextColors(colors)
                 .codeTextLanguage(.swift)
                 .font(fontToggle ? .caption2 : .subheadline)
             Button {
                 withAnimation {
                     fontToggle = !fontToggle
-                    theme = fontToggle ? .solarFlare : .xcode
+                    colors = .theme(fontToggle ? .solarFlare : .xcode)
                 }
             } label: {
                 Text("Change style")
