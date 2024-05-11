@@ -14,19 +14,13 @@ let package = Package(
             name: "HighlightSwift",
             targets: ["HighlightSwift"]),
     ],
-    dependencies: [
-        .package(
-            url: "https://github.com/apple/swift-collections.git",
-            .upToNextMinor(from: "1.0.5")
-        )
-    ],
     targets: [
         .target(
             name: "HighlightSwift",
-            dependencies: [
-                .product(name: "Collections", package: "swift-collections")
-            ],
-            resources: [.process("HighlightJS")]),
+            resources: [.process("HighlightJS")],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]),
         .testTarget(
             name: "HighlightSwiftTests",
             dependencies: ["HighlightSwift"]),

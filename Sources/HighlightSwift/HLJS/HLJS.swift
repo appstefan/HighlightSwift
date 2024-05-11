@@ -1,13 +1,12 @@
 import JavaScriptCore
 
-final class HLJS {
-    private let hljs: JSValue
+final actor HLJS {
+    private var hljs: JSValue?
     
-    init() throws {
-        hljs = try HLJS.load()
-    }
-
-    private static func load() throws -> JSValue {
+    private func load() throws -> JSValue {
+        if let hljs {
+            return hljs
+        }
         guard let context = JSContext() else {
             throw HLJSError.contextIsNil
         }
@@ -20,6 +19,7 @@ final class HLJS {
         guard let hljs = context.objectForKeyedSubscript("hljs") else {
             throw HLJSError.hljsNotFound
         }
+        self.hljs = hljs
         return hljs
     }
     
@@ -39,6 +39,7 @@ final class HLJS {
     }
     
     private func highlightAuto(_ text: String) throws -> HLJSResult {
+        let hljs = try load()
         let jsResult = hljs.invokeMethod(
             "highlightAuto",
             withArguments: [text]
@@ -55,6 +56,7 @@ final class HLJS {
         if ignoreIllegals {
             languageOptions["ignoreIllegals"] = ignoreIllegals
         }
+        let hljs = try load()
         let jsResult = hljs.invokeMethod(
             "highlight",
             withArguments: [text, languageOptions]
@@ -74,12 +76,7 @@ final class HLJS {
         else {
             throw HLJSError.valueNotFound
         }
-        return HLJSResult(
-            value: value,
-            illegal: illegal,
-            language: language,
-            relevance: relevance
-        )
+        return HLJSResult(value: value, illegal: illegal, language: language, relevance: relevance)
     }
 }
 

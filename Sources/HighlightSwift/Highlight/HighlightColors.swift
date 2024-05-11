@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct HighlightColors: Hashable {
+public struct HighlightColors: Hashable, Sendable {
     public let css: String
     public let background: String
     
@@ -18,7 +18,7 @@ public struct HighlightColors: Hashable {
         )
     }
     
-    public static func custom(css: String, background: String) -> HighlightColors {
+    public static func custom(css: String, background: String = "") -> HighlightColors {
         HighlightColors(css: css, background: background)
     }
 }

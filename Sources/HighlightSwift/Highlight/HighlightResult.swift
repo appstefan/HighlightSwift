@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The result of a call to Highlight
-public struct HighlightResult: Equatable {
+public struct HighlightResult: Equatable, Sendable {
     /// The syntax highlighted attributed text
     public let attributedText: AttributedString
     

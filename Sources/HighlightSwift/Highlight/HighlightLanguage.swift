@@ -1,4 +1,4 @@
-public enum HighlightLanguage: String {
+public enum HighlightLanguage: String, Sendable {
     var alias: String {
         switch self {
         case .cPlusPlus: return "cpp"

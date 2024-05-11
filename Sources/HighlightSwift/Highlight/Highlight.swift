@@ -1,14 +1,7 @@
 import Foundation
-import OrderedCollections
 
-public actor Highlight {
-    private var hljs: HLJS?
-    private var cache: OrderedDictionary<Int, HighlightResult> = [:]
-    private var cacheLimit: Int = 50
-    
-    public init(cacheLimit: Int = 50) {
-        self.cacheLimit = cacheLimit
-    }
+public final class Highlight: Sendable {
+    private let hljs = HLJS()
     
     /// Syntax highlight some text with automatic language detection.
     /// - Parameters:
@@ -16,9 +9,9 @@ public actor Highlight {
     ///   - colors: The highlight colors to use (default: .xcode/.light).
     /// - Throws: Either a HighlightError or an Error.
     /// - Returns: A syntax highlighted attributed string.
-    public func attributed(_ text: String,
-                           colors: HighlightColors = .light(.xcode)) throws -> AttributedString {
-        try request(text, mode: .automatic, colors: colors).attributedText
+    public func attributedText(_ text: String,
+                               colors: HighlightColors = .light(.xcode)) async throws -> AttributedString {
+        try await request(text, mode: .automatic, colors: colors).attributedText
     }
     
     /// Syntax highlight some text with a specific language.
@@ -28,10 +21,10 @@ public actor Highlight {
     ///   - colors: The highlight colors to use (default: .xcode/.light).
     /// - Throws: Either a HighlightError or an Error.
     /// - Returns: A syntax highlighted attributed string.
-    public func attributed(_ text: String,
-                           language: HighlightLanguage,
-                           colors: HighlightColors = .light(.xcode)) throws -> AttributedString {
-        try request(text, mode: .language(language), colors: colors).attributedText
+    public func attributedText(_ text: String,
+                               language: HighlightLanguage,
+                               colors: HighlightColors = .light(.xcode)) async throws -> AttributedString {
+        try await request(text, mode: .language(language), colors: colors).attributedText
     }
     
     /// Syntax highlight some text with a specific language.
@@ -41,10 +34,10 @@ public actor Highlight {
     ///   - colors: The highlight colors to use (default: .xcode/.light).
     /// - Throws: Either a HighlightError or an Error.
     /// - Returns: A syntax highlighted attributed string.
-    public func attributed(_ text: String,
-                           language: String,
-                           colors: HighlightColors = .light(.xcode)) throws -> AttributedString {
-        try request(text, mode: .languageAlias(language), colors: colors).attributedText
+    public func attributedText(_ text: String,
+                               language: String,
+                               colors: HighlightColors = .light(.xcode)) async throws -> AttributedString {
+        try await request(text, mode: .languageAlias(language), colors: colors).attributedText
     }
     
     /// Syntax highlight some text and return detailed results.
@@ -56,33 +49,9 @@ public actor Highlight {
     /// - Returns: The result of the syntax highlight.
     public func request(_ text: String,
                         mode: HighlightMode = .automatic,
-                        colors: HighlightColors = .light(.xcode)) throws -> HighlightResult {
-        guard cacheLimit > 0 else {
-            return try hljsRequest(text, mode: mode, colors: colors)
-        }
-        var hasher = Hasher()
-        hasher.combine(text)
-        hasher.combine(mode)
-        hasher.combine(colors)
-        let hashValue = hasher.finalize()
-        if let result = cache[hashValue] {
-            return result
-        } else {
-            let result = try hljsRequest(text, mode: mode, colors: colors)
-            let cacheCount = cache.count
-            if cacheCount + 1 > cacheLimit {
-                cache.removeFirst(cacheCount - cacheLimit)
-            }
-            cache[hashValue] = result
-            return result
-        }
-    }
-    
-    private func hljsRequest(_ text: String,
-                             mode: HighlightMode,
-                             colors: HighlightColors) throws -> HighlightResult {
-        let hljs = try hljs ?? HLJS()
-        let hljsResult = try hljs.highlight(text, mode: mode)
+                        colors: HighlightColors = .light(.xcode)) async throws -> HighlightResult {
+        let hljsResult = try await hljs.highlight(text, mode: mode)
+        try Task.checkCancellation()
         let isUndefined = hljsResult.value == "undefined"
         let attributedText: AttributedString
         if isUndefined {
@@ -105,10 +74,7 @@ public actor Highlight {
             .appending("\n<pre><code class=\"hljs\">")
             .appending(text.trimmingCharacters(in: .whitespacesAndNewlines))
             .appending("</code></pre>")
-        guard let data = html.data(using: .utf8) else {
-            throw HighlightError.dataEncoding
-        }
-        return data
+        return html.data(using: .utf8) ?? Data()
     }
     
     private func attributedTextFromData(_ data: Data) throws -> AttributedString {

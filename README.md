@@ -34,38 +34,36 @@ Drop-in replacement for the SwiftUI `Text` view
   <img alt="CodeText" src="https://github.com/appstefan/HighlightSwift/assets/6455394/5ae80ec9-d121-4f20-9cad-1ee3427e8052" width=50% height=50%>
 </picture>
 
-## How to
-### `Highlight`
+## Highlight
 
-Highlight is available as an environment value:
+Create an instance of the `Highlight` class:
 ```swift
-@Environment(\.highlight) var highlight
+@State var highlight = Highlight()
 ```
 
-Alternatively, create a new instance.
-By default the previous 50 highlights are cached. Use 0 to completely disable cacheing.
+Convert a `String` of code into a syntax highlighted `AttributedString`:
 ```swift
-let highlight = Highlight(cacheLimit: 50)
+let attributedText = try await highlight.attributedText("print(\"Hello World\")")
 ```
 
-Convert a plain `String` of code into a syntax highlighted `AttributedString`:
+Providing the `language:` parameter disables automatic language detection:
 ```swift
-let attributedText = try await highlight.attributed("print(\"Hello World\")")
+let attributedText = try await highlight.attributedText(code, language: "swift")
 ```
 
-The `language:` parameter sets a specific language, disabling automatic detection.
+Set the `colors:` parameter to choose the highlight color theme.
 ```swift
-let attributedText = try await highlight.attributed(code, language: "swift")
+let attributedText = try await highlight.attributedText(code, colors: .dark(.github))
 ```
 
-The `colors:` parameter sets the highlight theme and the system color scheme.
-Alternatively, a custom CSS color theme can be provided using the `.custom` option.
-Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
+Or use any custom CSS theme with the `.custom` option.
+Refer to the highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
 ```swift
-let attributedText = try await highlight.attributed(code, colors: .dark(.solarFlare))
+let attributedText = try await highlight.attributedText(code, colors: .custom(css: someCoolCSS))
 ```
 
-The full request function provides the detected language and other details:
+The somewhat less convenient `request` function returns a `HighlightResult` struct.
+It includes the attributed text along with the detected language and other details:
 ```swift
 let result: HighlightResult = try await highlight.request("print(\"Hello World\")")
 
@@ -88,33 +86,47 @@ Create a `CodeText` view:
 CodeText("print(\"Hello World\")")
 ```
 
-Typical `Text` modifiers like `.font()` can be applied:
+It has a themed background color by default for legibility.
+This can be disabled by setting `showBackground` to `false`:
+```swift
+CodeText("print(\"Hello World\")", showBackground: false)
+```
+
+Standard `Text` modifiers like `.font()` work as expected:
 ```swift
 CodeText("print(\"Hello World\")")
     .font(.system(.callout, weight: .semibold))
 ```
 
-The `.codeTextColors(_:)` modifier sets one of the 30 built-in color themes.
-Each theme has a dark color scheme variant that is used automatically in Dark Mode.
-Alternatively, custom CSS for both light and dark modes can be provided using the `.custom` color option.
-Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
+The `.codeTextColors(_:)` modifier sets one of the color themes.
+The dark color scheme variant of each theme is applied automatically in Dark Mode.
 ```swift
 CodeText("print(\"Hello World\")")
     .codeTextColors(.github)
 ```
 
-The `.codeTextLanguage(_:)` modifier sets a specific language, disabling automatic detection:
+Or use any custom CSS themes with the `.custom` color option.
+Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
+```swift
+CodeText("print(\"Hello World\")")
+    .codeTextColors(.custom(dark: .custom(css: someDarkCSS), light: .custom(css: someLightCSS)))
+```
+
+Use the `.codeTextLanguage(_:)` modifier to disable automatic language detection:
 ```swift
 CodeText("print(\"Hello World\")")
     .codeTextLanguage(.swift)
 ```
 
-The optional result binding provides the detected language, background color and other details:
+Optionally, read the `result` binding to get the detected language, background color and other details:
 ```swift
 @Binding var result: HighlightResult?
 
 var body: some View {
     CodeText("print(\"Hello World\")", result: $result)
+        .onChange(of: result) { _, newResult in
+            // Use result
+        }
 }
 ```
 
@@ -147,5 +159,4 @@ Stefan, thrower_ranges.0d@icloud.com
 ## License
 
 HighlightSwift is available under the MIT license. See the [LICENSE.md](/LICENSE.md) file.
-
 Highlight.js is available under the BSD license. See the [LICENSE.md](/Sources/HighlightSwift/HighlightJS/LICENSE.md) file.
