@@ -29,8 +29,8 @@ public struct CodeText {
         self.text = text
         self._result = result
         self.showBackground = showBackground
-        self.highlight = Highlight()
-        self.logger = Logger(subsystem: "HighlightSwift", category: "CodeText")
+        self._highlight = State(initialValue: Highlight())
+        self._logger = State(initialValue: Logger(subsystem: "HighlightSwift", category: "CodeText"))
     }
     
     private var attributedText: AttributedString {
