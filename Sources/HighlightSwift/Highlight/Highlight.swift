@@ -3,6 +3,8 @@ import Foundation
 public final class Highlight: Sendable {
     private let hljs = HLJS()
     
+    public init() { }
+    
     /// Syntax highlight some text with automatic language detection.
     /// - Parameters:
     ///   - text: The plain text code to highlight.
@@ -51,7 +53,6 @@ public final class Highlight: Sendable {
                         mode: HighlightMode = .automatic,
                         colors: HighlightColors = .light(.xcode)) async throws -> HighlightResult {
         let hljsResult = try await hljs.highlight(text, mode: mode)
-        try Task.checkCancellation()
         let isUndefined = hljsResult.value == "undefined"
         let attributedText: AttributedString
         if isUndefined {

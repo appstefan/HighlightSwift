@@ -20,6 +20,7 @@ public struct CodeText {
     /// Creates a text view that displays syntax highlighted code.
     /// - Parameters:
     ///   - text: Some plain text code to highlight and display.
+    ///   - showBackground: A boolean indicating wether to
     ///   - result: A binding to the highlight result (default: nil).
     public init(
         _ text: String,
