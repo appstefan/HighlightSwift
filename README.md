@@ -18,17 +18,17 @@ Syntax Highlighting in Swift and SwiftUI
 #### `Highlight`
 Convert any `String` of code into a syntax highlighted `AttributedString`
 * 🔍 Automatic language detection
-* 📚 Works with 50+ common languages
-* 🌈 Choose from 30 built-in color themes, or use your own CSS
+* 📚 Support for 50+ common languages
+* 🌈 Choose from 30 built-in color themes or use custom CSS
 * 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
-* 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
+* ☑️ Complete concurrency checking enabled
+* 🖥️ Works on iOS, iPadOS, macOS, and tvOS
 
 #### `CodeText`
 Display syntax highlighted code just like a standard `Text` view
-* 🎨 HighlightSwift
-* 🔠 Supports most `Text` modifiers like `.font()`
 * 🌗 Color theme syncs automatically with Dark Mode
-* 🟩 Optional card style adds the theme background color
+* 🔠 Supports text modifiers like `.bold()` or `.font()`
+* 🟩 Optional customizable `.card` style includes the theme background color
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
