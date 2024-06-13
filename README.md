@@ -18,15 +18,17 @@ Syntax Highlighting in Swift and SwiftUI
 #### `Highlight`
 Convert any `String` of code into a syntax highlighted `AttributedString`
 * 🔍 Automatic language detection
-* 📚 Works with 50 common languages
-* 🌈 Choose from 30 classic color themes
+* 📚 Works with 50+ common languages
+* 🌈 Choose from 30 built-in color themes, or use your own CSS
 * 🧰 Built with [highlight.js](https://github.com/highlightjs/highlight.js) and `JavaScriptCore`
 * 🖥️ Supported on iOS, iPadOS, macOS, and tvOS
 
 #### `CodeText`
-Drop-in replacement for the SwiftUI `Text` view
+Display syntax highlighted code just like a standard `Text` view
+* 🎨 HighlightSwift
 * 🔠 Supports most `Text` modifiers like `.font()`
 * 🌗 Color theme syncs automatically with Dark Mode
+* 🟩 Optional card style adds the theme background color
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github.com/appstefan/HighlightSwift/assets/6455394/5021a822-39f2-40bd-b1f8-2680c2382dd3">
@@ -62,8 +64,8 @@ Refer to the highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/la
 let attributedText = try await highlight.attributedText(code, colors: .custom(css: someCoolCSS))
 ```
 
-The somewhat less convenient `request` function returns a `HighlightResult` struct.
-It includes the attributed text along with the detected language and other details:
+The `request` function returns a `HighlightResult` struct.
+This result struct includes details such as the detected language along with the attributed text:
 ```swift
 let result: HighlightResult = try await highlight.request("print(\"Hello World\")")
 
@@ -74,8 +76,7 @@ let result: HighlightResult = try await highlight.request("print(\"Hello World\"
 //      languageName: "Swift?",
 //      backgroundColor: #1F2024FF,
 //      hasIllegal: false,
-//      isUndefined: false
-//  )
+//      isUndefined: false)
 ```
 
 ##
@@ -86,46 +87,45 @@ Create a `CodeText` view:
 CodeText("print(\"Hello World\")")
 ```
 
-It has a themed background color by default for legibility.
-This can be disabled by setting `showBackground` to `false`:
+The default style is `.plain` with no background or padding.
+Use the customizable `.card` style to show the theme background color:
 ```swift
-CodeText("print(\"Hello World\")", showBackground: false)
+CodeText("print(\"Hello World\")")
+    .codeTextStyle(.card(cornerRadius: 5))
 ```
 
-Standard `Text` modifiers like `.font()` work as expected:
+Apply standard `Text` modifiers like `.font()`:
 ```swift
 CodeText("print(\"Hello World\")")
     .font(.system(.callout, weight: .semibold))
 ```
 
-The `.codeTextColors(_:)` modifier sets one of the color themes.
-The dark color scheme variant of each theme is applied automatically in Dark Mode.
+Add the `.codeTextColors(_:)` modifier to set the color theme.
+The built-in color themes update automatically with Dark Mode to the corresponding dark variant.
 ```swift
 CodeText("print(\"Hello World\")")
     .codeTextColors(.github)
 ```
 
-Or use any custom CSS themes with the `.custom` color option.
+For more control, use any custom CSS theme with the `.custom` color option.
 Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
 ```swift
 CodeText("print(\"Hello World\")")
     .codeTextColors(.custom(dark: .custom(css: someDarkCSS), light: .custom(css: someLightCSS)))
 ```
 
-Use the `.codeTextLanguage(_:)` modifier to disable automatic language detection:
+Use the `.codeTextLanguage(_:)` modifier to set a specific language and disable automatic detection:
 ```swift
 CodeText("print(\"Hello World\")")
     .codeTextLanguage(.swift)
 ```
 
-Optionally, read the `result` binding to get the detected language, background color and other details:
+Add the `.onHighlight(_:)` modifier to get the detected language, background color and other details:
 ```swift
-@Binding var result: HighlightResult?
-
 var body: some View {
-    CodeText("print(\"Hello World\")", result: $result)
-        .onChange(of: result) { _, newResult in
-            // Use result
+    CodeText("print(\"Hello World\")")
+        .onHighlight { result in
+            //  ...
         }
 }
 ```

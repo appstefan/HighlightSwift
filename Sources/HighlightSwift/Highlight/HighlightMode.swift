@@ -1,5 +1,3 @@
-import Foundation
-
 public enum HighlightMode: Hashable, Sendable {
     /// Detect the language automatically
     case automatic
