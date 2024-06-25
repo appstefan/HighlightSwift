@@ -7,7 +7,14 @@ extension CodeText: View {
             .fontDesign(.monospaced)
             .padding(.vertical, style.verticalPadding)
             .padding(.horizontal, style.horizontalPadding)
-            .background(background)
+            .background {
+                if let cardStyle = style as? CardCodeTextStyle {
+                    CodeTextCardView(
+                        style: cardStyle,
+                        color: highlightResult?.backgroundColor
+                    )
+                }
+            }
             .onAppear {
                 guard highlightResult == nil else {
                     return
@@ -38,29 +45,15 @@ extension CodeText: View {
                 }
             }
     }
-
-    @ViewBuilder
-    private var background: some View {
-        if let card = style as? CardCodeTextStyle {
-            ZStack {
-                RoundedRectangle(cornerRadius: card.cornerRadius, style: card.cornerStyle)
-                    .fill(highlightResult?.backgroundColor ?? .clear)
-                RoundedRectangle(cornerRadius: card.cornerRadius, style: card.cornerStyle)
-                .stroke(card.stroke, lineWidth: card.lineWidth)
-            }
-        } else {
-            EmptyView()
-        }
-    }
 }
 
 //  MARK: - Preview
 
 @available(iOS 16.1, tvOS 16.1, *)
 private struct PreviewCodeText: View {
-    @State var fontToggle: Bool = false
     @State var colors: CodeTextColors = .theme(.xcode)
-    
+    @State var font: Font = .body
+
     let code: String = """
     import SwiftUI
     
@@ -76,17 +69,37 @@ private struct PreviewCodeText: View {
             CodeText(code)
                 .codeTextStyle(.card)
                 .codeTextColors(colors)
-                .codeTextLanguage(.swift)
-                .font(fontToggle ? .caption2 : .subheadline)
+                .highlightLanguage(.swift)
+                .font(font)
             Button {
                 withAnimation {
-                    fontToggle = !fontToggle
-                    colors = .theme(fontToggle ? .solarFlare : .xcode)
+                    colors = .theme(randomTheme())
+                    font = randomFont()
                 }
             } label: {
-                Text("Change style")
+                Text("Random")
             }
         }
+    }
+    
+    func randomTheme() -> HighlightTheme {
+        let cases = HighlightTheme.allCases
+        return cases[.random(in: 0..<cases.count)]
+    }
+    
+    func randomFont() -> Font {
+        let cases: [Font] = [
+            .body,
+            .callout,
+            .caption,
+            .caption2,
+            .footnote,
+            .headline,
+            .largeTitle,
+            .subheadline,
+            .title
+        ]
+        return cases[.random(in: 0..<cases.count)]
     }
 }
 
