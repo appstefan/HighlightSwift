@@ -35,7 +35,15 @@ public struct CodeText {
         }
         return attributedText
     }
-    
+
+    internal var fontDesign: Font.Design? {
+        if font == nil {
+            return .monospaced
+        } else {
+            return nil
+        }
+    }
+
     @MainActor
     internal func highlightText(
         mode: HighlightMode? = nil,

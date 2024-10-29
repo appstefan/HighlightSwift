@@ -4,7 +4,7 @@ import SwiftUI
 extension CodeText: View {
     public var body: some View {
         Text(attributedText)
-            .fontDesign(.monospaced)
+            .fontDesign(fontDesign)
             .padding(.vertical, style.verticalPadding)
             .padding(.horizontal, style.horizontalPadding)
             .background {
