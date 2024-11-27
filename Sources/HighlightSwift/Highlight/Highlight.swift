@@ -55,7 +55,6 @@ public final class Highlight: Sendable {
                         mode: HighlightMode = .automatic,
                         colors: HighlightColors = .light(.xcode)) async throws -> HighlightResult {
         let hljsResult = try await hljs.highlight(text, mode: mode)
-        try Task.checkCancellation()
         let isUndefined = hljsResult.value == "undefined"
         let attributedText: AttributedString
         if isUndefined {
