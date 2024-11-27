@@ -3,7 +3,9 @@ import Foundation
 public final class Highlight: Sendable {
     private let hljs = HLJS()
     
-    public init() { }
+    public init() {
+        
+    }
     
     /// Syntax highlight some text with automatic language detection.
     /// - Parameters:
