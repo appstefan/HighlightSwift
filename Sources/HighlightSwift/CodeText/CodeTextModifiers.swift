@@ -13,7 +13,14 @@ extension CodeText {
         content.colors = colors
         return content
     }
-    
+
+    /// Sets the font for this code text.
+    public func codeFont(_ font: PlatformFont) -> CodeText {
+        var content = self
+        content.font = font
+        return content
+    }
+
     /// Sets the language detection mode for this code text.
     /// See also `highlightLanguage(_:)` to simply set a language.
     public func highlightMode(_ mode: HighlightMode) -> CodeText {

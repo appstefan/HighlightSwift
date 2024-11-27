@@ -7,7 +7,8 @@ public struct CodeText {
     internal var mode: HighlightMode = .automatic
     internal var style: CodeTextStyle = .plain
     internal var colors: CodeTextColors = .theme(.xcode)
-    
+    internal var font: PlatformFont?
+
     internal var success: ((HighlightResult) -> Void)?
     internal var failure: ((Error) -> Void)?
     internal var result: ((Result<HighlightResult, Error>) -> Void)?
@@ -28,9 +29,21 @@ public struct CodeText {
     }
     
     internal var attributedText: AttributedString {
-        highlightResult?.attributedText ?? AttributedString(stringLiteral: text)
+        var attributedText = highlightResult?.attributedText ?? AttributedString(stringLiteral: text)
+        if let font {
+            attributedText.font = font
+        }
+        return attributedText
     }
-    
+
+    internal var fontDesign: Font.Design? {
+        if font == nil {
+            return .monospaced
+        } else {
+            return nil
+        }
+    }
+
     @MainActor
     internal func highlightText(
         mode: HighlightMode? = nil,
