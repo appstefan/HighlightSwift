@@ -1,7 +1,7 @@
 import Foundation
 
 public final class Highlight: Sendable {
-    private let hljs = HLJS()
+    private let hljs = HLJS.shared
     
     public init() {
         

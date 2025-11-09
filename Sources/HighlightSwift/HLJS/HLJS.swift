@@ -1,7 +1,11 @@
 import JavaScriptCore
 
 final actor HLJS {
+    static let shared = HLJS()
+    
     private var hljs: JSValue?
+    
+    private init() {}
     
     private func load() throws -> JSValue {
         if let hljs {
