@@ -3,7 +3,9 @@ import SwiftUI
 @available(iOS 16.1, tvOS 16.1, *)
 extension CodeText: View {
     public var body: some View {
-        Text(attributedText)
+        let input = self.input
+        let result = currentResult(for: input)
+        Text(result?.attributedText ?? AttributedString(input.text))
             .fontDesign(.monospaced)
             .padding(.vertical, style.verticalPadding)
             .padding(.horizontal, style.horizontalPadding)
@@ -11,38 +13,12 @@ extension CodeText: View {
                 if let cardStyle = style as? CardCodeTextStyle {
                     CodeTextCardView(
                         style: cardStyle,
-                        color: highlightResult?.backgroundColor
+                        color: result?.backgroundColor
                     )
                 }
             }
-            .onAppear {
-                guard highlightResult == nil else {
-                    return
-                }
-                highlightTask = Task {
-                    await highlightText()
-                }
-            }
-            .onDisappear {
-                highlightTask?.cancel()
-            }
-            .onChange(of: mode) { newMode in
-                highlightTask?.cancel()
-                highlightTask = Task {
-                    await highlightText(mode: newMode)
-                }
-            }
-            .onChange(of: colors) { newColors in
-                highlightTask?.cancel()
-                highlightTask = Task {
-                    await highlightText(colors: newColors)
-                }
-            }
-            .onChange(of: colorScheme) { newColorScheme in
-                highlightTask?.cancel()
-                highlightTask = Task {
-                    await highlightText(colorScheme: newColorScheme)
-                }
+            .task(id: input) {
+                await highlightText(input)
             }
     }
 }

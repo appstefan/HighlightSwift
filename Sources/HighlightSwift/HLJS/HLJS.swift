@@ -14,9 +14,9 @@ final actor HLJS {
         guard let highlightPath else {
             throw HLJSError.fileNotFound
         }
-        let highlightScript = try String(contentsOfFile: highlightPath)
+        let highlightScript = try String(contentsOfFile: highlightPath, encoding: .utf8)
         context.evaluateScript(highlightScript)
-        guard let hljs = context.objectForKeyedSubscript("hljs") else {
+        guard let hljs = context.objectForKeyedSubscript("hljs"), hljs.isObject else {
             throw HLJSError.hljsNotFound
         }
         self.hljs = hljs
@@ -24,6 +24,7 @@ final actor HLJS {
     }
     
     func highlight(_ text: String, mode: HighlightMode) throws -> HLJSResult {
+        try Task.checkCancellation()
         switch mode {
         case .automatic:
             return try highlightAuto(text)
@@ -44,6 +45,14 @@ final actor HLJS {
             "highlightAuto",
             withArguments: [text]
         )
+        // highlight.js 11.12 can rank Dart above Swift for SwiftUI views.
+        // An unquoted SwiftUI import distinguishes these two candidates.
+        if jsResult?.objectForKeyedSubscript("language")?.toString() == "dart",
+           let runnerUp = jsResult?.objectForKeyedSubscript("secondBest"),
+           runnerUp.objectForKeyedSubscript("language")?.toString() == "swift",
+           text.range(of: #"(?m)^[ \t]*import[ \t]+SwiftUI[ \t]*$"#, options: .regularExpression) != nil {
+            return try highlightResult(runnerUp)
+        }
         return try highlightResult(jsResult)
     }
     
@@ -57,6 +66,9 @@ final actor HLJS {
             languageOptions["ignoreIllegals"] = ignoreIllegals
         }
         let hljs = try load()
+        guard hljs.invokeMethod("getLanguage", withArguments: [language])?.isObject == true else {
+            return HLJSResult(value: nil, illegal: false, language: nil, relevance: 0)
+        }
         let jsResult = hljs.invokeMethod(
             "highlight",
             withArguments: [text, languageOptions]
@@ -65,18 +77,16 @@ final actor HLJS {
     }
     
     private func highlightResult(_ result: JSValue?) throws -> HLJSResult {
-        guard let result else {
+        guard let result, result.isObject,
+              let value = result.objectForKeyedSubscript("value"), value.isString else {
             throw HLJSError.valueNotFound
         }
-        let illegal = result.objectForKeyedSubscript("illegal").toBool()
-        let relevance = result.objectForKeyedSubscript("relevance").toInt32()
-        guard
-            let value = result.objectForKeyedSubscript("value").toString(),
-            let language = result.objectForKeyedSubscript("language").toString()
-        else {
-            throw HLJSError.valueNotFound
-        }
-        return HLJSResult(value: value, illegal: illegal, language: language, relevance: relevance)
+        let language = result.objectForKeyedSubscript("language")
+        return HLJSResult(
+            value: value.toString(),
+            illegal: result.objectForKeyedSubscript("illegal").toBool(),
+            language: language?.isString == true ? language?.toString() : nil,
+            relevance: result.objectForKeyedSubscript("relevance").toInt32()
+        )
     }
 }
-

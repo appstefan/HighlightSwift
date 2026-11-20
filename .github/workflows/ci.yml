@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  macos-tests:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: swift test
+
+  release-build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        platform: [iOS, tvOS]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build for ${{ matrix.platform }}
+        run: >
+          xcodebuild -scheme HighlightSwift -configuration Release
+          -destination 'generic/platform=${{ matrix.platform }}'
+          CODE_SIGNING_ALLOWED=NO build
+
+  iphone-foreground:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test returning from Home
+        run: |
+          device=$(xcrun simctl create "Highlight UI Tests" "iPhone 17 Pro")
+          xcodebuild test -project Tests/iOS/Foreground.xcodeproj -scheme Foreground \
+            -destination "id=$device" -parallel-testing-enabled NO

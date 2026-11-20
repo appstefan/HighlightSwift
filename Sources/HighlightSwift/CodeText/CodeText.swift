@@ -12,8 +12,8 @@ public struct CodeText {
     internal var failure: ((Error) -> Void)?
     internal var result: ((Result<HighlightResult, Error>) -> Void)?
 
-    @State internal var highlightTask: Task<Void, Never>?
-    @State internal var highlightResult: HighlightResult?
+    private let cachedResult: HighlightResult?
+    @State private var highlightResult: HighlightResult?
     
     @Environment(\.highlight) internal var highlight
     @Environment(\.colorScheme) internal var colorScheme
@@ -21,33 +21,32 @@ public struct CodeText {
     /// Creates a text view that displays syntax highlighted code.
     /// - Parameters:
     ///   - text: Plain text code to be syntax highlighted and displayed.
-    ///   - result: Existing highlight result to display instead of highlighting the text on appear.
+    ///   - result: Existing result to reuse when its source, mode, and colors match.
     public init(_ text: String, result: HighlightResult? = nil) {
         self.text = text
-        self._highlightResult = .init(initialValue: result)
+        self.cachedResult = result
     }
     
-    internal var attributedText: AttributedString {
-        highlightResult?.attributedText ?? AttributedString(stringLiteral: text)
+    var input: HighlightInput {
+        HighlightInput(text: text, mode: mode, colors: colorScheme == .dark ? colors.dark : colors.light)
     }
-    
+
+    func currentResult(for input: HighlightInput) -> HighlightResult? {
+        if highlightResult?.input == input { return highlightResult }
+        return cachedResult?.input == input ? cachedResult : nil
+    }
+
     @MainActor
-    internal func highlightText(
-        mode: HighlightMode? = nil,
-        colors: CodeTextColors? = nil,
-        colorScheme: ColorScheme? = nil
-    ) async {
-        let text = self.text
-        let mode = mode ?? self.mode
-        let colors = colors ?? self.colors
-        let scheme = colorScheme ?? self.colorScheme
-        let schemeColors = scheme == .dark ? colors.dark : colors.light
+    func highlightText(_ input: HighlightInput) async {
+        guard !Task.isCancelled, currentResult(for: input) == nil else { return }
         do {
-            let highlightResult = try await highlight.request(text, mode: mode, colors: schemeColors)
-            self.highlightResult = highlightResult
-            result?(.success(highlightResult))
-            success?(highlightResult)
+            let value = try await highlight.request(input.text, mode: input.mode, colors: input.colors)
+            try Task.checkCancellation()
+            highlightResult = value
+            result?(.success(value))
+            success?(value)
         } catch {
+            guard !Task.isCancelled else { return }
             result?(.failure(error))
             failure?(error)
         }

@@ -23,28 +23,35 @@ public struct HighlightResult: Equatable, Sendable {
     /// The highlight style background color
     public let backgroundColor: Color
     
+    let input: HighlightInput
+
     init(attributedText: AttributedString,
          highlightJSResult: HLJSResult,
-         backgroundColorHex: String) {
+         input: HighlightInput) {
+        self.input = input
         self.attributedText = attributedText
         self.hasIllegal = highlightJSResult.illegal
-        if highlightJSResult.language == "undefined" {
-            self.language = "unknown"
-        } else {
-            self.language = highlightJSResult.language
-        }
+        self.language = highlightJSResult.language ?? "unknown"
         self.relevance = Int(highlightJSResult.relevance)
-        self.isUndefined = highlightJSResult.value == "undefined"
+        self.isUndefined = highlightJSResult.value == nil
         self.languageName = HighlightResult.languageName(highlightJSResult)
-        self.backgroundColor = HighlightResult.backgroundColor(backgroundColorHex)
+        self.backgroundColor = HighlightResult.backgroundColor(input.colors.background)
     }
     
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.attributedText == rhs.attributedText &&
+            lhs.isUndefined == rhs.isUndefined &&
+            lhs.hasIllegal == rhs.hasIllegal &&
+            lhs.language == rhs.language &&
+            lhs.relevance == rhs.relevance &&
+            lhs.languageName == rhs.languageName &&
+            lhs.backgroundColor == rhs.backgroundColor
+    }
+
     private static func languageName(_ result: HLJSResult) -> String {
+        guard let language = result.language else { return "Unknown" }
         let name: String
-        switch result.language {
-        case "undefined":
-            name = "Unknown"
-            return name
+        switch language {
         case "xml": name = "HTML"
         case "cpp": name = "C++"
         case "csharp": name = "C#"
@@ -56,9 +63,9 @@ public struct HighlightResult: Equatable, Sendable {
         case "vbnet": name = "Visual Basic .NET"
         case "php-template": name = "PHP Template"
         case "css", "sql", "json", "php", "scss", "toml", "yaml", "wasm":
-            name = result.language.uppercased()
+            name = language.uppercased()
         default:
-            name = result.language.capitalized
+            name = language.capitalized
         }
         return name + (result.relevance <= 5 ? "?" : "")
     }

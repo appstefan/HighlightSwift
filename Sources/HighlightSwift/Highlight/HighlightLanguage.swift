@@ -1,13 +1,13 @@
-public enum HighlightLanguage: String, Sendable {
+public enum HighlightLanguage: String, CaseIterable, Sendable {
     var alias: String {
         switch self {
         case .cPlusPlus: return "cpp"
-        case .latex: return "tex"
-        case .phpTemplate: return "phptemp"
+        case .phpTemplate: return "php-template"
+        case .postgreSQL: return "pgsql"
         case .protocolBuffers: return "protobuf"
         case .pythonRepl: return "python-repl"
         case .visualBasic: return "vbnet"
-        case .webAssembly: return "webass"
+        case .webAssembly: return "wasm"
         default:
             return rawValue.lowercased()
         }
