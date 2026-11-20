@@ -1,6 +1,9 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 
 permissions:
   contents: read
@@ -24,3 +27,13 @@ jobs:
           xcodebuild -scheme HighlightSwift -configuration Release
           -destination 'generic/platform=${{ matrix.platform }}'
           CODE_SIGNING_ALLOWED=NO build
+
+  iphone-foreground:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Test returning from Home
+        run: |
+          device=$(xcrun simctl create "Highlight UI Tests" "iPhone 17 Pro")
+          xcodebuild test -project Tests/iOS/Foreground.xcodeproj -scheme Foreground \
+            -destination "id=$device" -parallel-testing-enabled NO
