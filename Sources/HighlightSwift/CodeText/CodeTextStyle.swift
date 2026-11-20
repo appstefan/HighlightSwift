@@ -67,7 +67,7 @@ extension CodeTextStyle where Self == CardCodeTextStyle {
     }
     
     public static var defaultStroke: AnyShapeStyle {
-        if #available(iOS 17.0, *) {
+        if #available(iOS 17.0, tvOS 17.0, *) {
             AnyShapeStyle(.separator)
         } else {
             AnyShapeStyle(.secondary.opacity(0.5))

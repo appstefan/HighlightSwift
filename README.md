@@ -83,8 +83,7 @@ HighlightResult(
     isUndefined: false)
 ```
 
-##
-### `CodeText`
+## CodeText
 
 Create a `CodeText` view with some code:
 ```swift
@@ -115,7 +114,7 @@ CodeText(someCode)
 Add the `.codeTextColors()` modifier to set the color theme. The built-in color themes update automatically with Dark Mode to the corresponding dark variant.
 ```swift
 CodeText(someCode)
-    .codeTextColors(.github)
+    .codeTextColors(.theme(.github))
 ```
 
 Choose the `.custom` option to use any custom CSS color theme. Refer to the official highlight.js [Theme Guide](https://highlightjs.readthedocs.io/en/latest/theme-guide.html#) for more info.
@@ -134,7 +133,7 @@ CodeText(someCode)
 The `.card` style has a few customization options, for example:
 ```swift
 CodeText(someCode)
-    .codeTextStyle(.card(cornerRadius: 0, stroke: .separator, verticalPadding: 12))
+    .codeTextStyle(.card(cornerRadius: 0, stroke: .secondary, verticalPadding: 12))
 ```
 
 #### Results
@@ -162,7 +161,7 @@ CodeText(someCode)
     }
 ```
 
-A previously stored highlight result can be passed to the `CodeText`.
+A `CodeText` view can reuse a previously stored result when the source, mode, and colors match.
 In combination with `.onHighlightSuccess()` the result can be persisted when the view might reappear frequently, such as in a list view:
 ```swift
 let someCode: String = """
@@ -185,6 +184,8 @@ var body: some View {
 
 ## Installation
 
+`Highlight` supports iOS and tvOS 15 or later and macOS 13 or later. The SwiftUI `CodeText` view requires iOS or tvOS 16.1 or later, or macOS 13 or later.
+
 ### Project
 
 1. In Xcode, go to `File` > `Add packages...`
@@ -195,15 +196,34 @@ var body: some View {
 In `Package.swift` add this repository as a dependency:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/appstefan/highlightswift.git", from: "1.1")
+    .package(url: "https://github.com/appstefan/highlightswift.git", from: "1.1.0")
 ],
 targets: [
     .target(
         name: "YourPackageName",
-        dependencies: ["HighlightSwift"]
+        dependencies: [.product(name: "HighlightSwift", package: "highlightswift")]
     )
 ]
 ```
+
+<details>
+<summary>Rebuilding the bundled highlight.js engine</summary>
+
+From a checkout of [highlight.js 11.12.0](https://github.com/highlightjs/highlight.js/tree/11.12.0), run the following commands. The language list includes the existing string-only aliases as well as every `HighlightLanguage` case.
+
+```sh
+npm ci
+node tools/build.js --target browser --no-esm \
+  applescript arduino awk bash basic c clojure cpp csharp css dart delphi diff django \
+  dockerfile elixir elm erlang fortran gherkin go gradle graphql haskell ini java \
+  javascript json julia kotlin latex less lisp lua makefile markdown mathematica \
+  matlab nix objectivec ocaml perl pgsql php php-template plaintext protobuf python \
+  python-repl r ruby rust scala scss shell sql swift typescript vbnet wasm xml yaml
+```
+
+Copy `build/highlight.min.js`, `LICENSE` (as `LICENSE.md`), and `NOTICE.txt` into `Sources/HighlightSwift/HighlightJS/`, then run `swift test` in this package.
+
+</details>
 
 ## Author
 

@@ -1,0 +1,26 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  macos-tests:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: swift test
+
+  release-build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        platform: [iOS, tvOS]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build for ${{ matrix.platform }}
+        run: >
+          xcodebuild -scheme HighlightSwift -configuration Release
+          -destination 'generic/platform=${{ matrix.platform }}'
+          CODE_SIGNING_ALLOWED=NO build

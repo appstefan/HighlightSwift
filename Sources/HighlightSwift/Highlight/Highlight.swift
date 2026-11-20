@@ -3,9 +3,7 @@ import Foundation
 public final class Highlight: Sendable {
     private let hljs = HLJS()
     
-    public init() {
-        
-    }
+    public init() { }
     
     /// Syntax highlight some text with automatic language detection.
     /// - Parameters:
@@ -54,34 +52,26 @@ public final class Highlight: Sendable {
     public func request(_ text: String,
                         mode: HighlightMode = .automatic,
                         colors: HighlightColors = .light(.xcode)) async throws -> HighlightResult {
+        let input = HighlightInput(text: text, mode: mode, colors: colors)
         let hljsResult = try await hljs.highlight(text, mode: mode)
-        let isUndefined = hljsResult.value == "undefined"
+        try Task.checkCancellation()
         let attributedText: AttributedString
-        if isUndefined {
-            attributedText = AttributedString(stringLiteral: text)
+        if let markup = hljsResult.value, !text.isEmpty {
+            // HTML parsing normalizes literal CR and CRLF line endings.
+            let code = markup.replacingOccurrences(of: "\r", with: "&#13;")
+            let html = "<style>\(colors.css)</style><pre><code class=\"hljs\">\(code)</code></pre>"
+            attributedText = try await attributedTextFromData(Data(html.utf8), source: text)
+            try Task.checkCancellation()
         } else {
-            let data = try htmlDataFromText(hljsResult.value, selectors: colors.css)
-            attributedText = try attributedTextFromData(data)
+            attributedText = AttributedString(text)
         }
-        return HighlightResult(
-            attributedText: attributedText,
-            highlightJSResult: hljsResult,
-            backgroundColorHex: colors.background
-        )
+        return HighlightResult(attributedText: attributedText, highlightJSResult: hljsResult, input: input)
     }
 
-    private func htmlDataFromText(_ text: String, selectors: String) throws -> Data {
-        let html = "<style>\n"
-            .appending(selectors)
-            .appending("\n</style>")
-            .appending("\n<pre><code class=\"hljs\">")
-            .appending(text.trimmingCharacters(in: .whitespacesAndNewlines))
-            .appending("</code></pre>")
-        return html.data(using: .utf8) ?? Data()
-    }
-    
-    private func attributedTextFromData(_ data: Data) throws -> AttributedString {
-        let mutableString = try NSMutableAttributedString(
+    @MainActor
+    private func attributedTextFromData(_ data: Data, source: String) throws -> AttributedString {
+        try Task.checkCancellation()
+        let imported = try NSMutableAttributedString(
             data: data,
             options: [
                 .documentType: NSAttributedString.DocumentType.html,
@@ -89,16 +79,30 @@ public final class Highlight: Sendable {
             ],
             documentAttributes: nil
         )
-        mutableString.removeAttribute(
-            .font,
-            range: NSMakeRange(0, mutableString.length)
-        )
-        let range = NSRange(location: 0, length: mutableString.length - 1)
-        let attributedString = mutableString.attributedSubstring(from: range)
+
+        // The importer may append a paragraph break or omit content hidden by custom CSS.
+        // Only take a styled range when it contains the exact original text.
+        guard imported.string.utf8.starts(with: source.utf8) else {
+            return AttributedString(source)
+        }
+        let range = NSRange(location: 0, length: source.utf16.count)
+        imported.removeAttribute(.font, range: range)
+        let attributedString = imported.attributedSubstring(from: range)
 #if os(macOS)
         return try AttributedString(attributedString, including: \.appKit)
 #else
         return try AttributedString(attributedString, including: \.uiKit)
 #endif
+    }
+}
+
+struct HighlightInput: Equatable, Sendable {
+    let text: String
+    let mode: HighlightMode
+    let colors: HighlightColors
+
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        // Swift strings can compare equal even when their source code units differ.
+        lhs.mode == rhs.mode && lhs.colors == rhs.colors && lhs.text.utf8.elementsEqual(rhs.text.utf8)
     }
 }
